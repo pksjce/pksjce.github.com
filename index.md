@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Pavithra Kodmad
-tagline: Just another front end developer
+tagline: 
 ---
 {% include JB/setup %}
 
@@ -15,5 +15,8 @@ tagline: Just another front end developer
       <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>
+  <div class='intro'>
+  	
+  </div>
 </div>
 
