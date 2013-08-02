@@ -31,6 +31,19 @@ html, body {
   padding: 20px 20px 10px;
   margin: -20px -20px 20px;
 }
+.page-body{
+	font-size:15px;
+	line-height:25px;
+}
+
+.page-body p{
+	font-size:15px;
+	line-height:25px;	
+}
+
+.page-body li {
+	line-height:25px;
+}
 
 .topbar .btn {
   border: 0;
