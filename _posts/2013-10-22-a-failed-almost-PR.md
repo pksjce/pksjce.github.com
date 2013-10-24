@@ -5,7 +5,7 @@ tags :
 ---
 {% include JB/setup %}
 
-### A failed almost PR
+####Generator Ember
 
 So, I came across a scaffold generator for Ember called \(surprise!\) generator-ember. --Its just the convention for generators--. [generator-ember](https://github.com/yeoman/generator-ember)
 
@@ -22,8 +22,12 @@ The structure seemed straight forward. For each of the generator the folder stru
 index.js had all the code required to generate the structure described by the hook. I could see it used api from Yeoman's base to copy the files to the new folders in a structured manner, fill in the templates using Lo-dash and put those in to the respective folders too. I checked this file out for some time and then opened the templates folder.
 templates folder had the whole structure of the hook that had to be mapped to the new folder as per the index.js code. Ok, so this gave me some context. It had the Gruntfile, package.json, bower.json, gitignore and all the other files that any app worth its js salt should have.
 
-Now I went to the yeoman generator tutorial at [Yeoman-generator](http://yeoman.io/generators.html)
+####Learn Yeoman
+
+Now I went to the yeoman generator tutorial at [Yeoman-generator.](http://yeoman.io/generators.html)
 The page is very well done and the instructions were very clear as to how to create your own generator. These had been applied well into the generator-ember and I could see the corresponding similarities of structure and understand the yeoman base methods better through the tutorial. 
+
+####Issue to solve
 
 I deemed myself ready to open the issues page and see if I can tackle one of them and send in a PR.
 So, I picked [Issue110](https://github.com/yeoman/generator-ember/issues/110). This was more of a gruntfile change than anything to do with yeoman. All I had to do was modify the grunt task of usemin to pick ember.prod.js while creating the concat subtask and replace the template in the app folder.
