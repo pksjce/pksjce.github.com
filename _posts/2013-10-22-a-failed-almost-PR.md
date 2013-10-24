@@ -15,7 +15,7 @@ tags :
 >I was right to decide what I decided because I did not know shit about Yeoman or the generator. So I dutifully forked the project, cloned it took it home. That night I fired up sublime with my generator ember clone and started going through the code. It was just node code and I had some confidence.
 
 >The structure seemed straight forward. For each of the generator the folder structure was 
-* name of hook DIR 
+* name of hook DIR  
 	* template DIR
 	* index.js
 
