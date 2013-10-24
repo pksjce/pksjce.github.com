@@ -52,6 +52,6 @@ Now I want to create a pull request. In the list of pull requests, I find [PR-95
 
 ##Things I learned
 * Best practices for an ember application can be found at generator-ember
-* Discovered the super awesome **usemin** grunt plugin.
+* Discovered the super awesome [**usemin**](https://github.com/yeoman/grunt-usemin) grunt plugin.
 * Learnt what Yeoman and Bower do.
 * Check existing PRs before you head to solve an issue.
