@@ -27,14 +27,14 @@ I have learnt the decreasemin operation but I havent used it till now, so I will
 
 Implementation of an FHeap is made using a doubly linked circular list with pointers to parent and child added. A pointer to the minimum node is always maintained in the heap instance and updated after every operation.
 Hence and FHeap node will look like this.
-	Node {
-		data,
-		next,
-		prev,
-		parent,
-		child,
-		rank
-	}
+    Node {
+    	data,
+    	next,
+       	prev,
+    	parent,
+    	child,
+    	rank
+    }
 
 1. Insert - During insertion, the new node is lazily added to the list of roots.The pseudocode would be -
 	item = new Node(data)
