@@ -14,8 +14,8 @@ Now what in heaven's name were Fibonacci Heaps? I had a vague idea of trees grow
 [Jonathan Shewchuk's lecture](http://www.youtube.com/watch?v=yIUFT6AKBGE) served as a lengthy but solid starting point. I now knew what priority queues were.Next I looked for some lecture specific to Fibonacci heaps and found [this entertaining video](http://www.youtube.com/watch?v=Wbw8_YaAvBY). It was somewhat informative but not very convincing in it's examples. So I decided to tackle it at the source and downloaded [Fredman and Tarjan's paper](http://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/fibonacci%20heaps.pdf). The clarity of the paper was very refreshing. It took me two days to absorb it, but by then I could mentally imagine all the operations in the F-Heap.
 
 I am not sure how well I could explain it, but here are my example operations using FHeaps for consideration.
-![FHEap1](../assets/imgs/fheap1.jpg)
-![FHeap2](../assets/imgs/fheap2.jpg)
+![FHEap1](http://pksjce.github.io/assets/imgs/fheap1.jpg)
+![FHeap2](http://pksjce.github.io/assets/imgs/fheap2.jpg)
 
 FHeaps are priority heaps whose job is to always give you the smallest key in your heap. The running times for finding minimum are very low because of thier structure. They are thus used in shortest path algorithms and are the best example of speeding an algorithm considerably by only changing datastructure.They achieve this speed by lazy insertion of elements and not sorting the entire heap for every deletion of minimum key.  
 Having said that, FHeaps mainly perform the following three operations
