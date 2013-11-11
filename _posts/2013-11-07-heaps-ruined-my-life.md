@@ -27,36 +27,36 @@ I have learnt the decreasemin operation but I havent used it till now, so I will
 
 Implementation of an FHeap is made using a doubly linked circular list with pointers to parent and child added. A pointer to the minimum node is always maintained in the heap instance and updated after every operation.
 Hence and FHeap node will look like this.
-    Node {
-    	data,
-    	next,
-       	prev,
-    	parent,
-    	child,
-    	rank
-    }
+	    Node {
+	    	data,
+	    	next,
+	    	prev,
+	    	parent,
+	    	child,
+	    	rank
+	    }
 
 1. Insert - During insertion, the new node is lazily added to the list of roots.The pseudocode would be -
-	item = new Node(data)
-	next = min.next
-	next.prev = item;
-	item.next = next;
-	min.next = item;
-	item.prev = min;
-	if(item.data < min.data){
-		min = item;
-	}
+		item = new Node(data)
+		next = min.next
+		next.prev = item;
+		item.next = next;
+		min.next = item;
+		item.prev = min;
+		if(item.data < min.data){
+			min = item;
+		}
 
 2. FindMin -
-	return min
+		return min
 
 3. DeleteMin - This is a more complex procedure.
 	
-	RemoveMin and make its children part of the root list.
-	Iterate through the rootlist and create new heaps by linking the roots which have same rank.
-	Do the above until no two trees in the heap have the same rank.
-	Now create a new heap out of the new set of trees.
-	Compare the roots of the heap and set min to the smallest key.
+		RemoveMin and make its children part of the root list.
+		Iterate through the rootlist and create new heaps by linking the roots which have same rank.
+		Do the above until no two trees in the heap have the same rank.
+		Now create a new heap out of the new set of trees.
+		Compare the roots of the heap and set min to the smallest key.
 
 A detailed example is present in the pictures and [my implementation in Javascript](https://github.com/pksjce/f_heaps) might help in better understanding.  
 
