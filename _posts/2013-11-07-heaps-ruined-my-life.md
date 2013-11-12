@@ -1,8 +1,7 @@
 ---
 layout: post
 category : lessons
-tags : 
-tagline: A look at F-Heaps
+tags :
 ---
 {% include JB/setup %}
 
