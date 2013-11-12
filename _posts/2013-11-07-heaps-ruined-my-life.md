@@ -28,30 +28,35 @@ I have learnt the decreasemin operation but I havent used it till now, so I will
 
 Implementation of an FHeap is made using a doubly linked circular list with pointers to parent and child added. A pointer to the minimum node is always maintained in the heap instance and updated after every operation.
 Hence and FHeap node will look like this.  
-{% highlight ruby linenos %}
-		Node {
-			data,
-			next,
-			prev,
-			parent,
-			child,
-			rank
-		}
+{% highlight ruby %}
+	Node {
+		data,
+		next,
+		prev,
+		parent,
+		child,
+		rank
+	}
 {% endhighlight %}
 
 1. Insert - During insertion, the new node is lazily added to the list of roots.The pseudocode would be -  
-		item = new Node(data)
-		next = min.next
-		next.prev = item;
-		item.next = next;
-		min.next = item;
-		item.prev = min;
-		if(item.data < min.data){
-			min = item;
-		}
+{% highlight ruby %}
+	item = new Node(data)
+	next = min.next
+	next.prev = item;
+	item.next = next;
+	min.next = item;
+	item.prev = min;
+	if(item.data < min.data){
+		min = item;
+	}
+{% endhighlight %}
 
 2. FindMin -  
-		return min
+	
+{% highlight ruby %}	
+	return min
+{% endhighlight %}
 
 3. DeleteMin - This is a more complex procedure.
 	
