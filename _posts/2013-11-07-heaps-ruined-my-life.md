@@ -2,11 +2,12 @@
 layout: post
 category : lessons
 tags : 
+tagline: A look at F-Heaps
 ---
 {% include JB/setup %}
 
 The day I found [Mary Rose Cook's blog](http://maryrosecook.com/), I was fascinated! This was exactly the no nonsense virtual mentor I was looking for. A look through her projects is enough to intimidate faint hearted people like me. With great determination, I picked up [Fibonacci Heaps](https://github.com/maryrosecook/fibonacciheap) as my next project.  
-
+{% highlight ruby linenos %}
 The only connection I felt to the topic when I read her post was that I knew what Binary Heaps were, or at least had a reasonable confidence of finding and understanding them quickly and I knew Djikstra's shortest path algorithm of course. With those as my foundations, I hunted for my DataStructures text book and quickly brushed up on binary heaps and how to create and sort them. Teaching my brother and discussing it with him got me up to speed on it's space and time complexities. Okay, that was relatively easy.  
 
 Now what in heaven's name were Fibonacci Heaps? I had a vague idea of trees growing in fibonacci numbered rank. I started with Wikipedia. A cursory glance did not help a lot. This was tougher. Mary's article, of course just whooshed above my head. So, I thought I should start with some basics. 
