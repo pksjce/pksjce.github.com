@@ -2,6 +2,7 @@
 layout: post
 category : lessons
 tags :
+tagline: The full essay
 ---
 {% include JB/setup %}
 
