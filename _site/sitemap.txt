@@ -3,5 +3,13 @@ http://pksjce.github.com/archive.html
 http://pksjce.github.com/sitemap.txt
 http://pksjce.github.com/index.html
 
+http://pksjce.github.com/lessons/2013/11/17/Why-hacker-school
+http://pksjce.github.com/lessons/2013/11/07/a-lesson-on-heaps
+http://pksjce.github.com/lessons/2013/11/05/big-history-formation-of-stars
+http://pksjce.github.com/lessons/2013/11/04/talking-about-big-history
+http://pksjce.github.com/lessons/2013/10/22/a-failed-almost-pull-request
+http://pksjce.github.com/lessons/2013/08/30/optimisation-javascript
+http://pksjce.github.com/lessons/2013/08/13/html2pdfconverter
 http://pksjce.github.com/lessons/2013/08/02/pitfalls-preventing-cross-browser-compatibility
+http://pksjce.github.com/lessons/2013/07/05/gruntandyourworkflow
 http://pksjce.github.com/lessons/2011/12/29/jekyll-introduction
