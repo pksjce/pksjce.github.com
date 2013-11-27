@@ -3,6 +3,7 @@ http://pksjce.github.com/archive.html
 http://pksjce.github.com/sitemap.txt
 http://pksjce.github.com/index.html
 
+http://pksjce.github.com/lessons/2013/11/26/machine-learning-rocks
 http://pksjce.github.com/lessons/2013/11/17/Why-hacker-school
 http://pksjce.github.com/lessons/2013/11/07/a-lesson-on-heaps
 http://pksjce.github.com/lessons/2013/11/05/big-history-formation-of-stars
