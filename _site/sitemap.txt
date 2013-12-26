@@ -3,6 +3,8 @@ http://pksjce.github.com/archive.html
 http://pksjce.github.com/sitemap.txt
 http://pksjce.github.com/index.html
 
+http://pksjce.github.com/lessons/2013/12/25/emberjs-cookbook-contribution
+http://pksjce.github.com/lessons/2013/12/20/flightjs-microframework
 http://pksjce.github.com/lessons/2013/11/26/machine-learning-rocks
 http://pksjce.github.com/lessons/2013/11/24/thoughts-on-angular
 http://pksjce.github.com/lessons/2013/11/07/a-lesson-on-heaps
