@@ -201,5 +201,160 @@ Now, when we try to evaluate <code>s</code>, we are not able to access the globa
 
 Its a pass!
 
+###Add Console features  
+
+####History on uparrow/downarrow
+
+This seems to be an easy feature to add. But one caveat I found was  
+<code>Arrow keys cannot be detected on keypress event.</code>  
+Once this was cleared, I added a keydown event on <code>consoley</code> with the following functionality
+
+{%highlight javascript%}
+	consoley.keydown(function(evt){
+		var len = historyStack.length;
+		if(evt.keyCode === 38 && len > 0){
+			uparrowhit +=1;
+			if(len >= uparrowhit){
+				consoley.val(historyStack[len - uparrowhit]);
+			}
+		} else if(evt.keyCode === 40 && len > 0 && uparrowhit > 0){
+			if(len >= uparrowhit && !evt.programmatic){
+				uparrowhit -=1;
+				consoley.val(historyStack[len - uparrowhit]);
+			} else {
+				return;
+			}
+		}
+	});
+{%endhighlight%} 
+
+This seems to work fine, except I am not able to position the cursor of the text box at the end of the text after addition of the code line from history. Turns out <code>evt.preventDefault()</code> at the end of the event handling does the trick.
+
+###Add autocompletion.
+This to me seemed a harder task than the feature above.
+Autocompleting would include -  
+
+#####Get all properties of input object.
+{%highlight javascript%}
+	//always cache window properties - in our case iframe windows properties.
+	var mockConsole = document.getElementById('myframe').contentWindow;
+	windowProps = function(){
+		var props = [];
+		for(key in mockConsole){
+			props.push(key);
+		}
+		return props;
+	}();
+	//now check if a dot seperated object needs to be evaluated.
+	function addAutocomplete(consoley, js){
+		var inputSplit = js.split('.');
+		var len = inputSplit.length;
+		var autocompletelist = windowProps;
+		var filter = js;
+		if(inputSplit.length > 1 && inputSplit[0] !== 'window'){
+			filter = inputSplit[len -1];
+			var evalStr = inputSplit.slice(0, len-1).join('.');
+			var evaled = eval(evalStr);
+			autocompletelist = [];
+			for(key in evaled){
+				autocompletelist.push(key);
+			}
+		}
+		var autocompleteStr = getAutocompleteStr(autocompletelist, filter);
+		alert(autocompleteStr);
+	}
+
+	function getAutocompleteStr(list, filter){
+		var filterList = list.filter(function(item){
+			if(item.indexOf(filter) === 0){
+				return item;
+			}
+		})
+		filterList.sort(function(a,b){
+			if(a>b){
+				return 1;
+			} else if(a<b){
+				return -1;
+			} else {
+				return 1;
+			}
+		})
+		if(filterList.length){
+			return filterList[0];
+		} 
+		return;
+	}
+{%endhighlight%}
+
+The <code>alert(autocompleteStr)</code> now gives me the right autocomplete string after every keystroke.
+
+####Display the autocomplete as a grayed out string behind the input.
+	{%highlight javascript%}
+		//Html
+		<div>
+			<input type = 'text' id='console'>
+			<div id='autocomplete'></div>
+		</div>
+
+		//CSS
+		#console{
+			width: 98%;
+			border: 0;
+			border-bottom: 1px solid lightgray;
+			position: absolute;
+			background: transparent
+		}
+		#console:focus{
+			outline: 0;
+			border-bottom: 1px solid lightgray;
+		}
+		#autocomplete{
+			color: lightgray;
+			line-height: 138%;
+			position: absolute;
+			z-index: 9;
+		}
+
+		//Javascript
+		var autocompleteElem = $('#autocomplete');
+		autocompleteElem.css('left',  offset + autodistance);
+		autocompleteStr = autocompleteStr.substr(filterLen, autocompleteStr.length);
+		autocompleteElem.html(autocompleteStr);
+	{%endhighlight%}
+
+This seems to be somewhat satisfactory.
+
+####Left Arrow must complete the pending autocomplete.
+	{%highlight javascript%}
+	consoley.keypress(function(evt){
+		var js = consoley.val();
+		var key = self._whichKey(evt);
+		if(key === 13){
+			self._uparrowhit = 0;
+			var x;
+			var type = 'result';
+            
+			try{
+				x = mockConsole.eval(js);
+			}catch(e){
+				x = e.message;
+				type= 'error';
+			}
+			self._historyStack.push(js);
+			consoley.val('');
+			self._autocomplete.html('');
+			var ans = self.make_nice(x, type);
+			self._write(js, ans);
+		}
+	});
+	{%endhighlight%}
+
+###Making this a plugin  
+
+The code needs to be modularized and made somewhat like a plugin so that it can be injected to any given div element.  
+
+
+
+
 
 
