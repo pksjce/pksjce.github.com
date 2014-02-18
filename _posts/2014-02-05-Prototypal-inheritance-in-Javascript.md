@@ -120,28 +120,19 @@ The newer browsers allow us to use <code>Object.create(anotherObj)</code> to cre
 
 Lets consider this - 
 {%highlight javascript%}
-	var Animal = function(){};
-	var genericAnimal = new Animal();
+	var FantasyAnimal = function(){};
+	console.log(FantasyAnimal.constructor);
+	//function Function() { [native code] }
+	console.log(FantasyAnimal.prototype);
+	//Object {}
+	console.log(FantasyAnimal.prototype.constructor);
+	//function(){}
 
-	var Cat = function(){};
-	//we want cat to inherit animal characterstics
-	Cat.prototype = new Animal();
-	var zorro = new Cat();
-
-	//So now I have an object and I want to check its origins.
-	console.log(genericAnimal instanceof Animal);
-	// true
-	console.log(zorro instanceof Cat);
-	// false - This is not right.
-	//The constructor has been lost in the process. So, how do we fix this?
-
-	Cat.prototype.constructor = Cat;
-	var bobcat = new Cat();
-	console.log(bobcat instanceof Cat);
-	//true - Now it knows!
-	//But sadly
-	console.log(zorro instanceof Cat);
-	//false - zorro will never know he's a cat!
+	function Animal(){};
+	console.log(Animal.prototype);
+	//Animal {}
+	console.log(Animal.prototype.constructor);
+	//function Animal(){}
 {%endhighlight%}
 
 
