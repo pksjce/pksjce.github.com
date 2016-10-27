@@ -72,7 +72,7 @@ JB :
   #
   home_path: /index.html
   archive_path: /archive.html
-  categories_path : /categories.html
+  about_path : /about.html
   tags_path : /tags.html
 
   # Settings for comments helper
