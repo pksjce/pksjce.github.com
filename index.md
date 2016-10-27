@@ -7,7 +7,7 @@ tagline:
 
 <div style="height:100%">
   <div>
-    Client side has undergone a large revolution of sorts in terms of its importance. I'm here, riding the wave!
+    JavaScripter, OSS newbie, loves cats and webpack not in equal measures.
   </div>
 
   <ul class="posts">
