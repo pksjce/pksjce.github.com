@@ -5,7 +5,7 @@ tags :
 ---
 {% include JB/setup %}
 
-###Generator Ember
+### Generator Ember
 
 
 So, I came across a scaffold generator for Ember called \(surprise!\) [generator-ember](https://github.com/yeoman/generator-ember). This generator, as the word indicates, generates a scaffolding of an ember application for you for 2 main reasons.  
@@ -25,15 +25,15 @@ I was right to decide what I decided because I did not know shit about Yeoman or
 
 The structure seemed straight forward. For each of the generator the folder structure was   
  * \(name of hook\) \[DIR\]    
-	* template \[DIR\]  
-	* index.js  
+ * template \[DIR\]  
+ * index.js  
 
 index.js had all the code required to generate the structure described by the hook. I could see it used api from Yeoman's base to copy the files to the new folders in a structured manner, fill in the templates using [Lo-dash](http://lodash.com/) and put those in to the respective folders too. I looked at this file for some time and then opened the "templates" folder.
 The "templates" folder had the whole structure of the hook that had to be mapped to the new folder as per the index.js code. Ok, so this gave me some context. It had the Gruntfile, package.json, bower.json, gitignore and all the other files that any app worth its js salt should have.
 
   
   
-###Learn Yeoman
+### Learn Yeoman
   
 
 Now I went to the yeoman generator tutorial at [Yeoman-generator.](http://yeoman.io/generators.html)
@@ -41,7 +41,7 @@ The page is very well done and the instructions were very clear as to how to cre
   
   
   
-###Issue to solve
+### Issue to solve
 
 
 I deemed myself ready to open the issues page and see if I can tackle one of them and send in a PR.
@@ -50,7 +50,7 @@ I found grunt-string-replace and used it to replace instances of ember.js with e
 
 Now I want to create a pull request. In the list of pull requests, I find [PR-95](https://github.com/yeoman/generator-ember/pull/95) and my heart sinks. It's been already solved. In a much better way. This [person](https://github.com/johanneswuerbach) replaced the prod files for ember and ember data in the scripts array even before they were added to the html file. Good job and much cleaner. So I give up for the day and have written this.
 
-##Things I learned
+## Things I learned
 * Best practices for an ember application can be found at generator-ember
 * Discovered the super awesome [**usemin**](https://github.com/yeoman/grunt-usemin) grunt plugin.
 * Learnt what Yeoman and Bower do.
