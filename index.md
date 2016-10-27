@@ -7,7 +7,7 @@ tagline:
 
 <div style="height:100%">
   <div>
-    JavaScripter, OSS newbie, loves cats and webpack not in equal measures.
+    JavaScripter, OSS newbie. Loves cats and webpack, not in equal measures.
   </div>
 
   <ul class="posts">
