@@ -1,7 +1,7 @@
 ---
 layout: post
 category : jest
-tags : jest, resct
+tags : jest, react
 tagline: Learn jest!
 ---
 

@@ -7,11 +7,11 @@ tagline: eval all the way
 
 {% include JB/setup %}
 
-##Objective
+## Objective
 
 The objective of this exercise is to build a working javascript console on the browser. 
 
-##Analysis
+## Analysis
 
 The functionality of this console must be as follows -  
 1. Should interpret only code that is input into the console box.This maybe single line or multiple lines.
@@ -19,11 +19,11 @@ The functionality of this console must be as follows -
 3. Should show any errors thrown during evaluation.
 
 
-##Solution
+## Solution
 
-###Trial 1
+### Trial 1
 
-####Test cases -  
+#### Test cases -  
 (Initial) 
 1. var s = 1; --> undefined  
 2. s --> 1;  
@@ -32,7 +32,7 @@ The functionality of this console must be as follows -
 The first thought on interpreting javascript is to use eval() method and start printing its results.  
 Add a try/catch to catch any errors and display them;
 
-####Javascript
+#### Javascript
 {%highlight javascript%}
 	
 $(document).ready(function(){
@@ -69,7 +69,7 @@ function make_nice(x, type){
 }
 {%endhighlight%}
 
-####HTML
+#### HTML
 {%highlight HTML%}
 	<html>
 		<head>
@@ -96,13 +96,13 @@ Since undefined cannot be printed, I had to make a <code>make_nice</code> method
 This method passes the first and third test cases but fails the second one.
 The reason for this as per [Context for evals](https://weblogs.java.net/blog/driscoll/archive/2009/09/08/eval-javascript-global-context), is that eval is executed in the scope of the callback function. This scope is different every different time the callback function is called. Hence the result of the first eval was effectively "deleted" and new scope was created for the next event callback. The solution for this is to call eval with scope that persists and in our case global scope.
 
-###Trial 2
+### Trial 2
 
 Call <code>eval()</code> as <code>window.eval()</code>
 
 With no change in html lets change the keypress callback to 
 
-####Javascript
+#### Javascript
 {%highlight javascript%}
 	
 	consoley.keypress(function(evt){
@@ -136,7 +136,7 @@ Now we see that we are able to override the value of <code>s</code> in our mock 
 
 Solutions for this could be -   
 
-###Trial 3  
+### Trial 3  
 
 Create a separate object and execute eval in its scope.
 
@@ -176,7 +176,7 @@ var mock_console = function(){
 This still does not solve our problem because the global scope can still be modified through this function.
 
 
-###Trial 4  
+### Trial 4  
 
 After a lot of search, the only way to escape context of the page alltogether is to execute the eval in an iframe. This is the only place where another html page can be created and still be accessed by our page.
 
@@ -201,9 +201,9 @@ Now, when we try to evaluate <code>s</code>, we are not able to access the globa
 
 Its a pass!
 
-###Add Console features  
+### Add Console features  
 
-####History on uparrow/downarrow
+#### History on uparrow/downarrow
 
 This seems to be an easy feature to add. But one caveat I found was  
 <code>Arrow keys cannot be detected on keypress event.</code>  
@@ -230,11 +230,11 @@ Once this was cleared, I added a keydown event on <code>consoley</code> with the
 
 This seems to work fine, except I am not able to position the cursor of the text box at the end of the text after addition of the code line from history. Turns out <code>evt.preventDefault()</code> at the end of the event handling does the trick.
 
-###Add autocompletion.
+### Add autocompletion.
 This to me seemed a harder task than the feature above.
 Autocompleting would include -  
 
-#####Get all properties of input object.
+##### Get all properties of input object.
 {%highlight javascript%}
 	//always cache window properties - in our case iframe windows properties.
 	var mockConsole = document.getElementById('myframe').contentWindow;
@@ -288,7 +288,7 @@ Autocompleting would include -
 
 The <code>alert(autocompleteStr)</code> now gives me the right autocomplete string after every keystroke.
 
-####Display the autocomplete as a grayed out string behind the input.
+#### Display the autocomplete as a grayed out string behind the input.
 	{%highlight javascript%}
 		//Html
 		<div>
@@ -324,7 +324,7 @@ The <code>alert(autocompleteStr)</code> now gives me the right autocomplete stri
 
 This seems to be somewhat satisfactory.
 
-####Left Arrow must complete the pending autocomplete.
+#### Left Arrow must complete the pending autocomplete.
 	{%highlight javascript%}
 	consoley.keypress(function(evt){
 		var js = consoley.val();
@@ -349,7 +349,7 @@ This seems to be somewhat satisfactory.
 	});
 	{%endhighlight%}
 
-###Making this a plugin  
+### Making this a plugin  
 
 The code needs to be modularized and made somewhat like a plugin so that it can be injected to any given div element.  
 

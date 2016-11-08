@@ -10,7 +10,7 @@ tagline: A primer on Container!
 Ember does a lot of behind-the-scenes work to maintain the relationships and connections between objects in your application. All of Ember's internal objects and those in your application namespace have references stored in another object named Container. This container is referred to under different circumstances during your application's lifecycle to retrieve needed objects. Ember also manages complex dependencies between these objects using the same container.
 
 
-####What is Object Management in Ember?
+#### What is Object Management in Ember?
 
 Ember creates tons of objects for your definitions. For eg - the singleton router, instances of views that you/handlebars helpers defined and ofcourse your controller, models and templates.  
 Management of these objects in the context of Ember would involve doing the following -  
@@ -18,7 +18,7 @@ Management of these objects in the context of Ember would involve doing the foll
 * Keep track of all the objects defined.
 * Retrieving stored objects vs Creating new objects where required vs Retrieve method as is.  
 
-####When does dependency injection happen in Ember?  
+#### When does dependency injection happen in Ember?  
 
 The answer to this question is - All the time!  
 
@@ -34,7 +34,7 @@ var container = new Ember.Container();
 
 Your whole application will only have one container that is created by Ember to hold all the component objects and connections between them.Ember accomplishes all the above magic through this container object. 
 
-#####Keep track of all the objects defined.
+##### Keep track of all the objects defined.
 
 When you define an object, say,    
 
@@ -63,7 +63,7 @@ The parameters required to register are
 
 2. param2 - This is the `function definition` that you provided. This is referred to as the `factory`  
 
-#####Lookup Objects
+##### Lookup Objects
 
 The api `container.lookup` allows the application to retrieve objects from the container as and when required.  
 
@@ -86,7 +86,7 @@ The default option for both are false, in which case the container returns the f
 
 At this point, it's good to mention that `the container object is available in all the objects that are looked up from it`. This is a useful thing to know and will be mentioned further down the road.  
 
-####Dependency injection  
+#### Dependency injection  
 
 Injecting dependencies in the Ember contex is to make one object from the registry available in another object of the registry.If this is an instantiated object, then it will be available within the scope of the parent object.  
 

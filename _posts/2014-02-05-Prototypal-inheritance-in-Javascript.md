@@ -11,7 +11,7 @@ Javascript has prototypal inheritance.
 
 It is one of the few mainstream languages to have this kind of a method to inherit.  
 
-###What is prototyping?
+### What is prototyping?
 Prototyping means to copy the base for creation and then extend the base to the desired features. Then what is classical inheritance? It is to have a fixed frame for an object in the form of a class. This class is duplicated into an object form. For objects with more features, one must first extend the class and then create objects out of the extended class.  
 In a language where prototypal inheritance is practiced, it generally encourages changing the object properties during run time and **we know for sure this happens in Javascript**  
 This also means that Objects in Javascript are mutable.
@@ -20,7 +20,7 @@ So to be clear
 Classical Inheritance ---> **define classes and create an instance of these classes**
 Prototypal Inheritance ---> **define objects and create new objects from old objects**
 
-####Code Reuse
+#### Code Reuse
 In a classical language, it is very clear how code reuse happens. A class is used multiple times to create instances. By extending a class, we make sure the instances of the extended class have the properties of the parent class.  
 In a prototypal language, it is a bit hazy as to how the child object gets to use the properties defined in the parent. Usually, the language provides a construct/default property on the object to connect it to its parent. This is called **delegation**.  
  
@@ -100,7 +100,7 @@ This shows that the value in the object always overrides the value in the protot
 	// 2
 {%endhighlight%}
 
-####Creating a new Object from another Object.  
+#### Creating a new Object from another Object.  
 
 The newer browsers allow us to use <code>Object.create(anotherObj)</code> to create objects while inheriting from another object. For eg
 {%highlight javascript%}
@@ -116,7 +116,7 @@ The newer browsers allow us to use <code>Object.create(anotherObj)</code> to cre
 	}
 {%endhighlight%}
 
-####What is the constructor?
+#### What is the constructor?
 
 Lets consider this - 
 {%highlight javascript%}
@@ -136,7 +136,7 @@ Lets consider this -
 {%endhighlight%}
 
 
-###Summary
+### Summary
 
 - Javascript reuses code by Delegation of the prototype to all children.
 - Change in prototype affects already created children.
