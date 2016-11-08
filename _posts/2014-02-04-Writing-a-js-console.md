@@ -33,7 +33,7 @@ The first thought on interpreting javascript is to use eval() method and start p
 Add a try/catch to catch any errors and display them;
 
 #### Javascript
-{%highlight javascript%}
+```javascript
 	
 $(document).ready(function(){
 	var consoley = $('#console');
@@ -67,10 +67,10 @@ function make_nice(x, type){
     return x;
 	
 }
-{%endhighlight%}
+```
 
 #### HTML
-{%highlight HTML%}
+```html
 	<html>
 		<head>
 			<script src='jquery.js'>
@@ -88,7 +88,7 @@ function make_nice(x, type){
 			</div>
 		</body>
 	</html>
-{%endhighlight%}
+```
 
 
 Since undefined cannot be printed, I had to make a <code>make_nice</code> method where I set <code>undefined</code> as the output.
@@ -103,8 +103,7 @@ Call <code>eval()</code> as <code>window.eval()</code>
 With no change in html lets change the keypress callback to 
 
 #### Javascript
-{%highlight javascript%}
-	
+```javascript	
 	consoley.keypress(function(evt){
 		if(evt.keyCode === 13){
 			var js = consoley.val();
@@ -123,14 +122,15 @@ With no change in html lets change the keypress callback to
 		}
 	});
 
-{%endhighlight%}
+```
 
 This change seems to have done the trick and is passing all 3 of our test cases.  
 Let's create another test case.
 Add below snippet of code to the javascript of the page.
-{%highlight javascript%}
+
+```javascript
 	var s = 1;
-{%endhighlight%}
+```
 
 Now we see that we are able to override the value of <code>s</code> in our mock console. This is highly undesirable behaviour. We do not want users of our console to be able to modify the objects on the page itself and thus mess with the functionality of the page.
 
@@ -140,7 +140,7 @@ Solutions for this could be -
 
 Create a separate object and execute eval in its scope.
 
-{%highlight javascript%}
+```javascript
 var s = 2;
 $(document).ready(function(){
 	var consoley = $('#console');
@@ -171,7 +171,7 @@ var mock_console = function(){
 		}
 	}
 }
-{%endhighlight%}
+```
 
 This still does not solve our problem because the global scope can still be modified through this function.
 
@@ -181,13 +181,15 @@ This still does not solve our problem because the global scope can still be modi
 After a lot of search, the only way to escape context of the page alltogether is to execute the eval in an iframe. This is the only place where another html page can be created and still be accessed by our page.
 
 So I created an iframe by   
-{%highlight HTML%}
+
+```html
 	<iframe id='myframe' style='display:none'>
 	</iframe>
-{%endhighlight%}
+```
 
-By changing my mockconsole to point to iframe's contentWindow, we have -   
-{%highlight javascript%}
+By changing my mockconsole to point to iframe's contentWindow, we have -
+
+```javascript
 	var mockConsole = document.getElementById('myframe').contentWindow;
 	try{
 		x = mockConsole.eval(js);
@@ -195,7 +197,7 @@ By changing my mockconsole to point to iframe's contentWindow, we have -
 		x = e.message;
 		type= 'error';
 	}
-{%endhighlight%}  
+```  
 
 Now, when we try to evaluate <code>s</code>, we are not able to access the globally defined <code>s = 2</code>  
 
@@ -209,7 +211,7 @@ This seems to be an easy feature to add. But one caveat I found was
 <code>Arrow keys cannot be detected on keypress event.</code>  
 Once this was cleared, I added a keydown event on <code>consoley</code> with the following functionality
 
-{%highlight javascript%}
+```javascript
 	consoley.keydown(function(evt){
 		var len = historyStack.length;
 		if(evt.keyCode === 38 && len > 0){
@@ -226,7 +228,7 @@ Once this was cleared, I added a keydown event on <code>consoley</code> with the
 			}
 		}
 	});
-{%endhighlight%} 
+```
 
 This seems to work fine, except I am not able to position the cursor of the text box at the end of the text after addition of the code line from history. Turns out <code>evt.preventDefault()</code> at the end of the event handling does the trick.
 
@@ -235,7 +237,8 @@ This to me seemed a harder task than the feature above.
 Autocompleting would include -  
 
 ##### Get all properties of input object.
-{%highlight javascript%}
+
+```javascript
 	//always cache window properties - in our case iframe windows properties.
 	var mockConsole = document.getElementById('myframe').contentWindow;
 	windowProps = function(){
@@ -284,13 +287,13 @@ Autocompleting would include -
 		} 
 		return;
 	}
-{%endhighlight%}
+```
 
 The <code>alert(autocompleteStr)</code> now gives me the right autocomplete string after every keystroke.
 
 #### Display the autocomplete as a grayed out string behind the input.
-	{%highlight javascript%}
-		//Html
+```javascript
+
 		<div>
 			<input type = 'text' id='console'>
 			<div id='autocomplete'></div>
@@ -320,12 +323,12 @@ The <code>alert(autocompleteStr)</code> now gives me the right autocomplete stri
 		autocompleteElem.css('left',  offset + autodistance);
 		autocompleteStr = autocompleteStr.substr(filterLen, autocompleteStr.length);
 		autocompleteElem.html(autocompleteStr);
-	{%endhighlight%}
-
+```
 This seems to be somewhat satisfactory.
 
 #### Left Arrow must complete the pending autocomplete.
-	{%highlight javascript%}
+
+	```javascript
 	consoley.keypress(function(evt){
 		var js = consoley.val();
 		var key = self._whichKey(evt);
@@ -347,8 +350,7 @@ This seems to be somewhat satisfactory.
 			self._write(js, ans);
 		}
 	});
-	{%endhighlight%}
-
+	```
 ### Making this a plugin  
 
 The code needs to be modularized and made somewhat like a plugin so that it can be injected to any given div element.  
