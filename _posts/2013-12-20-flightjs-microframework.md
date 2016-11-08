@@ -7,7 +7,7 @@ tagline: Things I learnt
 
 {% include JB/setup %}
 
-##FlightJs
+## FlightJs
 
 [Flight](http://twitter.github.io/flight/) is a tiny framework put forth by twitter. The crux of its usage is based on events.  
 
