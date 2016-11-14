@@ -141,7 +141,7 @@ This means `jest` needs to preprocess our test code and imported source code to 
 Add a [`.babelrc`](https://github.com/pksjce/jest-blog-samples/blob/master/dom-testing/.babelrc) file to your application. In this you can specify the babel plugins required to transpile every ES2015 feature that your application uses.
 `babel` provides excellent presets for [`react`](https://babeljs.io/docs/plugins/preset-react/) and [`es2015`](https://babeljs.io/docs/plugins/preset-es2015/). Presets are just a collection of relevant babel plugins for a logical set of transformations.
 
-jest provides with it an inbuilt babel preprocessor, called `babel-jest`. Essentially this just transpiles all the tests before running them, if there is a .babelrc file present in the application. 
+jest provides with it an inbuilt babel preprocessor, called `babel-jest`. Essentially, this just transpiles all the tests before running them, if there is a .babelrc file present in the application.
 
 Now on running `jest`, we have
 
@@ -156,5 +156,10 @@ Snapshots:   0 total
 Time:        2.175s
 Ran all test suites.
 ```
+
+#### Test an event execution
+
+enzyme rendered components can simulate events like click and select easily. We can then test the state of the component and check if the desired change has occured.
+
 
 
