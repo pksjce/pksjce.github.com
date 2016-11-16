@@ -172,7 +172,7 @@ To test this component we need
  - Test for first toggle of click and expect the change in text.
  - Test for second toggle of click and again expect change in text to the default.
 
-[src/app/index.test.js]()
+[__tests__/index.test.js](https://github.com/pksjce/jest-blog-samples/blob/master/event-testing/__tests__/index.test.js)
 
 ```javascript
 import React from 'react';
@@ -246,7 +246,123 @@ render(<App/>, document.body)
 
 #### `window` event testing
 
+Many times, our apps respond to outer stimuli like window events. We would like to test if our app behaves correctly under these conditions.
+For this case, we will have to mock the document and document.window object.
 
+We will use [`jsdom`](https://github.com/tmpvar/jsdom#for-the-hardcore-jsdomjsdom) which provides a way of faking document and window objects...
+
+```bash
+npm install --save-dev jsdom
+```
+
+We are now going to use `jsdom` to wire up our fake objects. Since this activity needs to happen before every test as any of them could want the window object, we will write this code at a `setupFile` which can be configured in `jest`
+
+Go to your `package.json` and add the following [option](http://facebook.github.io/jest/docs/configuration.html#setupfiles-array)
+
+[__package.json__](https://github.com/pksjce/jest-blog-samples/blob/master/window-testing/package.json)
+
+```json
+jest: {
+    "setupFiles" : ["<rootDir>/setupFile.js"]
+}
+```
+
+[__setupFile.js__](https://github.com/pksjce/jest-blog-samples/blob/master/window-testing/setupFile.js)
+
+```javascript
+import {jsdom} from 'jsdom';
+
+const documentHTML = '<!doctype html><html><body><div id="root"></div></body></html>';
+global.document = jsdom(documentHTML);
+global.window = document.parentWindow;
+
+global.window.resizeTo = (width, height) => {
+	global.window.innerWidth = width || global.window.innerWidth;
+	global.window.innerHeight = width || global.window.innerHeight;
+	global.window.dispatchEvent(new Event('resize'));
+};
+
+```
+
+Note that the above code also gives us a `div` element with id `root`. We can now `mount` our react component onto this element for inclusion in the DOM.
+
+Also, `resizeTo` will not be defined in this fake `window` object. It will return `undefined`. Hence we need to mock up the whole function too. You will need to do this to trigger any event on the `window` from your test.
+Currently I'm only bothered with the `innerWidth` and `innerHeight` parameters. Hence I will only update them as part of the mock.
+
+Our App code for this test is a react component that responds to `window`'s resize event. If the resize results in the `innerWidth > 1024` then it changes its `width` to `350`. If not `width = 300`.
+
+[__src/App.js__](https://github.com/pksjce/jest-blog-samples/blob/master/window-testing/src/App.js)
+
+```javascript
+import React, {Component} from 'react';
+
+export const WIDTH_ABOVE_1024 = 350;
+export const WIDTH_BELOW_1024 = 300;
+export const THRESHOLD_WIDTH = 1024;
+
+export default class App extends Component {
+    constructor() {
+        super();
+        this.state = {
+            width: window.innerWidth > THRESHOLD_WIDTH ? WIDTH_ABOVE_1024: WIDTH_BELOW_1024
+        }
+        this.handleResize = this.handleResize.bind(this);
+    }
+    componentDidMount() {
+        window.addEventListener('resize', this.handleResize)
+    }
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleResize)
+    }
+    render() {
+        return <div style={{width:this.state.width}}>My width is {this.state.width}</div>;
+    }
+    handleResize() {
+        this.setState({
+            width: window.innerWidth > THRESHOLD_WIDTH ? WIDTH_ABOVE_1024 : WIDTH_BELOW_1024
+        })
+    }
+}
+```
+
+For the above component, we again need to test if
+ - Default behaviour.
+ - Resize to `width > 1024`
+ - Resize to `width <=1024`
+
+ [__src/App.test.js__](https://github.com/pksjce/jest-blog-samples/blob/master/window-testing/src/App.test.js)
+
+ ```javascript
+import React from 'react';
+import App, {WIDTH_ABOVE_1024, WIDTH_BELOW_1024, THRESHOLD_WIDTH} from './App';
+import {mount} from 'enzyme';
+
+
+describe('The main app', () => {
+    let app;
+    beforeEach(() => {
+        app = mount(<App/>, {attachTo: document.getElementById('root')});
+    })
+
+    it('the app should have default width as per window width', () => {
+        var width = window.innerWidth > THRESHOLD_WIDTH ? WIDTH_ABOVE_1024 : WIDTH_BELOW_1024;
+        expect(app.text()).toBe("My width is " + width);
+        app.unmount();
+    })
+    it ('should change width on resize', () => {
+        window.resizeTo(1000, 1000);
+        expect(app.text()).toBe("My width is " + WIDTH_BELOW_1024);
+        window.resizeTo(1025, 1000)
+        expect(app.text()).toBe("My width is " + WIDTH_ABOVE_1024);
+        app.unmount();
+    })
+})
+ ```
+
+ Things to note are
+  - We can totally use the component's constants for testing. As I've tested for the intiial default width
+  - Once you `mount` your app using `enzyme`, you will also need to `unmount()` it at the end of each test.
+  - `window.resizeTo` will trigger a change in `window.innerWidth`. The app code rerenders as per app logic and we can test for printed width.
 
 
 
