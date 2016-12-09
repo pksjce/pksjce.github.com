@@ -7,5 +7,68 @@ group: navigation
 {% include JB/setup %}
 
 <div>
-    <h2>About me</h2>
+    <style>
+        .bio {
+            margin: 0 auto;
+            width: 500px;
+        }
+        .row {
+            display: flex;
+        }
+        .col {
+            width: 50%;
+            text-align: center;
+            padding: 20px;
+        }
+        .flipkart {
+            background: #2874f0;
+            padding:5px;
+            border-radius: 3px;
+        }
+        img {
+            height: 25px;
+        }
+        .toprow {
+            border-bottom: 1px solid lightblue;
+        }
+        .rightborder {
+            border-right: 1px solid lightblue;
+        }
+        .goodreads {
+            height: 60px;
+            margin-top: -15px;
+        }
+    </style>
+    <h2>Pavithra Kodmad</h2>
+    <p>
+        JavaScripter, OSS newbie. Loves cats and books, not in equal measures.
+    </p>
+    <div class='bio'>
+        <div class='row toprow'>
+            <div class='col rightborder'>
+                <div>UI Engineer</div>
+                <a href='https://www.flipkart.com'><img class='flipkart' src='https://img1a.flixcart.com//www/prod/images/flipkart_logo_retina-9fddfff2.png' /></a>
+            </div>
+            <div class='col'>
+                <a href='https://twitter.com/PKodmad'>
+                    <div>@PKodmad</div>
+                    <img src ='/assets/imgs/twitter.png'/>
+                </a>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col rightborder'>
+                <a href='https://github.com/pksjce'>
+                    <div>@pksjce</div>
+                    <img src ='/assets/imgs/github.png'/>
+                </a>
+            </div>
+            <div class='col'>
+                <a href='https://www.goodreads.com/user/show/2822160-pavi'>
+                    <div>Pavithra</div>
+                    <img class='goodreads' src ='/assets/imgs/goodreads.png'/>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>  

@@ -1,0 +1,282 @@
+<h1 id="notes-on-jest">Notes on Jest</h1>
+
+<p>During the past 4 months, I have been working on the Flipkart desktop website team. For me it meant finally working on code at scale. If there was any place where TDD would be appreciated, it was here, on user facing critical code. The tests were being written on a setup of Karma, Mocha, Sinon and Enzyme. It worked pretty great, but the major peeve for all of us, was that, it was so slow!</p>
+
+<p>The team had already tried using Jest before, had faced many issues with the automocking and given up. But then Jest made a turnaround and with a great community effort released improved and <a href="https://facebook.github.io/jest/blog/2016/10/03/jest-16.html">new versions</a>. From all the blogposts, we found that Jest’s main focus was testing performance and something new called <a href="https://facebook.github.io/jest/blog/2016/07/27/jest-14.html">“Snapshot testing”</a>. Also, mainly it promised to be “Painless JavaScript Testing”. Jest can mostly work for testing in any JavaScript framework or environment. Also, its a known fact that Jest uses itself to test it’s codebase.</p>
+
+<p>This post wants to be an FAQ guide which would have given us extra help during this transition.</p>
+
+<h2 id="faqs">FAQs</h2>
+
+<p>The FAQs are categorised by the facet of testing that they cover. These may also apply to any testing in general.</p>
+
+<h3 id="fundamentally-speaking">Fundamentally speaking</h3>
+
+<p><strong>Why should we move to <code class="highlighter-rouge">Jest</code> when we already have a working setup?</strong></p>
+
+<p>A move to Jest would mean a somewhat change in paradigm and would involve team effort. We justified the effort with the following reasons</p>
+
+<ul>
+  <li>Jest is way faster than our current setup. It runs test suites in a parallel and the community is focused on improving developer experience through performance.</li>
+  <li>I really liked the interactive CLI that comes with it. In <code class="highlighter-rouge">watch</code> mode, Jest runs only the tests associated with your code changes. But it allows you to interact with the tests by providing functionality to update snapshots, search for a particular suite, run all tests if you want to.</li>
+  <li><a href="https://facebook.github.io/jest/docs/getting-started.html">Great documentation</a></li>
+  <li>Snapshot testing for components. It is kind of tailor made for React apps.</li>
+  <li>Great defaults meaning “Zero” configuration. Running <code class="highlighter-rouge">jest</code> alone would be enough to run test files. Mocking is not a marriage of complexity and confusion.</li>
+  <li>Existing tests could be easily migrated <a href="https://facebook.github.io/jest/docs/migration-guide.html#content">manually or through automated codemods</a></li>
+</ul>
+
+<p><strong>What about testing on the browser?</strong></p>
+
+<p>Yes, the earlier setup opened a chromium browser and tested our components. It was pretty cool actually. But, it was one of the things that made executing tests slow for us. Being priviledged enough to have manual QA, we decided to forego this functionality.</p>
+
+<p>For more reasoning, you should <a href="https://github.com/facebook/jest/issues/139#issuecomment-229277654">read this</a> by <a href="https://github.com/cpojer">@cpojer</a> on why Facebook doesn’t need them.
+Also, we are open to using <a href="https://getstorybook.io/">React storybook</a> in the future, which I think has potential for browser testing.</p>
+
+<p><strong>What is Snapshot testing? Will it really help?</strong></p>
+
+<p>Snapshot testing, is a procedure in which, Jest generates readable snapshots of your component’s view. A snapshot is basically a text file with xml, which acts like the source of your view, at that point in your testcase. Different snapshots can be created with different props to your components.</p>
+
+<p>Snapshots can be saved after simulating events like <code class="highlighter-rouge">click</code> and <code class="highlighter-rouge">hover</code>. The point would be to save the expected view of your component which is a function of some mock data. If in the future, a developer changes your component, Jest would create a new snapshot of the component and compare it with the saved snapshot. If there is a change in view, it will alert the developer and she will have to tell Jest to save this new snapshot. Since the snapshot is committed to version control, it will show up in a code review and the changes can be approved accordingly.
+While we still have reservations of, if its actually feasible to review large changes in the snapshot, I definitely think this enriches the content of a code review.(<strong>Edit</strong> <a href="https://github.com/cpojer">@cpojer</a> said in this <a href="https://github.com/kosamari/web.advent.today/pull/27#discussion_r91407888">comment</a> that snapshots are even more powerful!)</p>
+
+<h3 id="implementation-questions">Implementation Questions</h3>
+
+<p><strong>How do I test my React+Redux code?</strong></p>
+
+<p>We have been following an approach where we test each of the moving parts independently.</p>
+
+<h2 id="components">Components</h2>
+<p>A React component is a view only component, with some event handling and some local state. It is <code class="highlighter-rouge">connect</code>ed to the Redux store for state and actions.
+We test the base component, which is free of Redux. For a component like,</p>
+
+<p><strong>my-component.js</strong></p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code><span class="kr">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span><span class="nx">Component</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'react'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">connect</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'react-redux'</span><span class="p">;</span>
+
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">MyComponent</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="nx">constructor</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">localProp</span><span class="p">:</span> <span class="s1">'Default'</span>
+    <span class="p">};</span>
+    <span class="p">}</span>
+    <span class="nx">handleClick</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+        <span class="na">localProp</span><span class="p">:</span> <span class="s1">'After click'</span>
+    <span class="p">});</span>
+    <span class="p">}</span>
+    <span class="nx">render</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">reduxProp</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">localProp</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">Click</span> <span class="nx">me</span><span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/div&gt;</span><span class="se">)</span><span class="err">;
+</span>    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="nx">connect</span><span class="p">(</span><span class="nx">reduxState</span> <span class="o">=&gt;</span> <span class="p">({</span><span class="na">reduxProp</span><span class="p">:</span> <span class="nx">reduxState</span><span class="p">.</span><span class="nx">prop</span><span class="p">})</span> <span class="p">)(</span><span class="nx">MyComponent</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>my-component.test.js</strong></p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code><span class="c1">// needed for jsx</span>
+<span class="kr">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s1">'react'</span><span class="p">;</span>
+<span class="c1">// import the named export</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">MyComponent</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'./my-component'</span><span class="p">;</span>
+<span class="c1">// enzyme has rendering utils</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">shallow</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'enzyme'</span><span class="p">;</span>
+<span class="c1">// needed to create snapshot</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">shallowToJson</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'enzyme-to-json'</span><span class="p">;</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">'&lt;MyComponent /&gt;'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">component</span><span class="p">;</span>
+    <span class="c1">// create an instance of MyComponent before each test</span>
+    <span class="nx">beforeEach</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">component</span> <span class="o">=</span> <span class="nx">shallow</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">MyComponent</span> <span class="nx">reduxProp</span><span class="o">=</span><span class="s2">"A test prop"</span> <span class="o">/&gt;</span><span class="p">);</span>
+    <span class="p">});</span>
+    <span class="c1">// test rendering expectations</span>
+    <span class="nx">it</span><span class="p">(</span><span class="s1">'should render well'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="c1">// DOM test</span>
+        <span class="nx">expect</span><span class="p">(</span><span class="nx">component</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="nx">A</span> <span class="nx">test</span> <span class="nx">prop</span><span class="o">&lt;</span><span class="sr">/div&gt;</span><span class="se">))</span><span class="sr">.toBe</span><span class="se">(</span><span class="sr">true</span><span class="se">)</span><span class="err">;
+</span>        <span class="nx">expect</span><span class="p">(</span><span class="nx">component</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="nx">Default</span><span class="o">&lt;</span><span class="sr">/div&gt;</span><span class="se">))</span><span class="sr">.toBe</span><span class="se">(</span><span class="sr">true</span><span class="se">)</span><span class="err">;
+</span>        <span class="c1">// Match snapshots (creates the first time)</span>
+        <span class="nx">expect</span><span class="p">(</span><span class="nx">shallowToJson</span><span class="p">(</span><span class="nx">component</span><span class="p">)).</span><span class="nx">toMatchSnapshot</span><span class="p">();</span>
+    <span class="p">});</span>
+    <span class="c1">// test the action</span>
+    <span class="nx">it</span><span class="p">(</span><span class="s1">'should change text after click'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="c1">//find particular DOM and simulate click</span>
+        <span class="nx">component</span><span class="p">.</span><span class="nx">childAt</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nx">simulate</span><span class="p">(</span><span class="s1">'click'</span><span class="p">);</span>
+        <span class="nx">test</span> <span class="nx">expectation</span> <span class="nx">after</span> <span class="nx">click</span> <span class="nx">is</span> <span class="nx">done</span>
+        <span class="nx">expect</span><span class="p">(</span><span class="nx">component</span><span class="p">.</span><span class="nx">text</span><span class="p">().</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">'After click'</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="c1">// match snapshot because view changed.</span>
+        <span class="nx">expect</span><span class="p">(</span><span class="nx">shallowToJson</span><span class="p">(</span><span class="nx">component</span><span class="p">)).</span><span class="nx">toMatchSnapshot</span><span class="p">();</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+
+<h2 id="reducers">Reducers</h2>
+
+<p>Reducers, being pure functions, are ridiculously easy to test. The redux docs <a href="http://redux.js.org/docs/recipes/WritingTests.html#reducers">shows how to do this</a>.</p>
+
+<h2 id="actions">Actions</h2>
+
+<p>We used the <a href="http://redux.js.org/docs/recipes/WritingTests.html#async-action-creators">recommended technique</a>, but instead of using <code class="highlighter-rouge">nock</code> we decided to mock the <code class="highlighter-rouge">fetch</code> api with Jest’s easy mocking system.</p>
+
+<p><strong>asyncUtil.js</strong></p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code><span class="kr">import</span> <span class="nx">configureMockStore</span> <span class="nx">from</span> <span class="s1">'redux-mock-store'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">thunk</span> <span class="nx">from</span> <span class="s1">'redux-thunk'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">fetchMock</span> <span class="nx">from</span> <span class="s1">'fetch-mock'</span><span class="p">;</span>
+
+<span class="kr">export</span> <span class="kr">const</span> <span class="nx">runsynctest</span> <span class="o">=</span> <span class="p">({</span><span class="nx">testName</span><span class="p">,</span> <span class="nx">expectedAction</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">params</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">it</span><span class="p">(</span><span class="nx">testName</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">expect</span><span class="p">(</span><span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">...</span><span class="nx">params</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expectedAction</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+<span class="kr">export</span> <span class="kr">const</span> <span class="nx">runasynctest</span> <span class="o">=</span> <span class="p">({</span><span class="nx">testName</span><span class="p">,</span> <span class="nx">expectedActions</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">params</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">middlewares</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">thunk</span> <span class="p">];</span>
+    <span class="kr">const</span> <span class="nx">mockStore</span> <span class="o">=</span> <span class="nx">configureMockStore</span><span class="p">(</span><span class="nx">middlewares</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">mockStore</span><span class="p">();</span>
+    <span class="nx">fetchMock</span><span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'*'</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span> <span class="c1">// This can be customised</span>
+    <span class="nx">it</span><span class="p">(</span><span class="nx">testName</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">store</span>
+        <span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">...</span><span class="nx">params</span><span class="p">))</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">args</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getActions</span><span class="p">()).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expectedActions</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+</code></pre>
+</div>
+
+<p><strong>my-action.test.js</strong></p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code><span class="kr">import</span> <span class="p">{</span> <span class="nx">runasynctest</span><span class="p">,</span> <span class="nx">runsynctest</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./actionsUtil'</span><span class="p">;</span>
+<span class="c1">// fetchVal is your typical fetch action which returns a promise</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">fetchVal</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'../my-actions'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="o">*</span> <span class="nx">as</span> <span class="nx">types</span> <span class="nx">from</span> <span class="s1">'constants/my-constants'</span><span class="p">;</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">'async-actions'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">runasynctest</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="na">testName</span><span class="p">:</span> <span class="s1">'should simulate fetch action'</span><span class="p">,</span>
+        <span class="na">expectedActions</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="nx">types</span><span class="p">.</span><span class="nx">GET__REQUEST</span> <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="na">type</span><span class="p">:</span> <span class="nx">types</span><span class="p">.</span><span class="nx">GET__SUCCESS</span><span class="p">,</span>
+            <span class="na">pids</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="na">fn</span><span class="p">:</span> <span class="nx">fetchVal</span><span class="p">,</span>
+        <span class="na">params</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+
+<h2 id="components-with-actions">Components with Actions</h2>
+
+<p>If in the above example for <code class="highlighter-rouge">MyComponent</code>’s testing, the <code class="highlighter-rouge">handleClick</code> were to send actions with redux like</p>
+
+<p><strong>my-component.js</strong></p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code><span class="p">...</span>
+
+<span class="nx">handleClick</span> <span class="o">=</span> <span class="nx">event</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">fetchValAction</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="p">...</span>
+</code></pre>
+</div>
+
+<p><strong>my-component.test.js</strong></p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code><span class="nx">describe</span><span class="p">(</span><span class="s1">'&lt;MyComponent /&gt;'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">it</span><span class="p">(</span><span class="s1">'should call fetchVal action'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">mockFetchVal</span> <span class="o">=</span> <span class="nx">jest</span><span class="p">.</span><span class="nx">mock</span><span class="p">();</span>
+    <span class="kr">const</span> <span class="nx">component</span> <span class="o">=</span> <span class="nx">mount</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">MyComponent</span> <span class="nx">fetchValAction</span><span class="o">=</span><span class="p">{</span><span class="nx">mockFetchVal</span><span class="p">}</span><span class="sr">/&gt;</span><span class="se">)</span><span class="err">;
+</span>    <span class="nx">component</span><span class="p">.</span><span class="nx">childAt</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nx">simulate</span><span class="p">(</span><span class="s1">'click'</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">mockFetchVal</span><span class="p">).</span><span class="nx">toHaveBeenCalled</span><span class="p">();</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p>tldr; Various solutions can be adopted. Choose whichever suits your environment.</p>
+
+<p><strong>How do I test asynchronous functions?</strong></p>
+
+<p>The Jest docs has a <a href="https://facebook.github.io/jest/docs/tutorial-async.html#content">tutorial on asynchronous testing</a>. Converting them to <code class="highlighter-rouge">Promises</code> works too.</p>
+
+<p><strong>How to simulate window events?</strong></p>
+
+<p>We used <a href="https://github.com/tmpvar/jsdom">jsdom</a> to get a DOM that works with Node.js.
+We set it up for the project at Jest’s <a href="https://facebook.github.io/jest/docs/configuration.html#setupfiles-array"><code class="highlighter-rouge">setupFile</code></a>.</p>
+
+<p><strong>setupFile.js</strong></p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code><span class="kr">const</span> <span class="nx">jsdom</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'jsdom'</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">documentHTML</span> <span class="o">=</span> <span class="s1">'&lt;!doctype html&gt;&lt;html&gt;&lt;body&gt;&lt;div id="root"&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;'</span><span class="p">;</span>
+<span class="nx">global</span><span class="p">.</span><span class="nb">document</span> <span class="o">=</span> <span class="nx">jsdom</span><span class="p">.</span><span class="nx">jsdom</span><span class="p">(</span><span class="nx">documentHTML</span><span class="p">);</span>
+<span class="nx">global</span><span class="p">.</span><span class="nb">window</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">parentWindow</span><span class="p">;</span>
+<span class="nx">global</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">resizeTo</span> <span class="o">=</span> <span class="p">(</span><span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	<span class="nx">global</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">innerWidth</span> <span class="o">=</span> <span class="nx">width</span> <span class="o">||</span> <span class="nx">global</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">innerWidth</span><span class="p">;</span>
+	<span class="nx">global</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span> <span class="o">=</span> <span class="nx">width</span> <span class="o">||</span> <span class="nx">global</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span><span class="p">;</span>
+	<span class="nx">global</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">dispatchEvent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Event</span><span class="p">(</span><span class="s1">'resize'</span><span class="p">));</span>
+<span class="p">};</span>
+<span class="nx">global</span><span class="p">.</span><span class="nx">Promise</span> <span class="o">=</span> <span class="nx">require</span><span class="p">.</span><span class="nx">requireActual</span><span class="p">(</span><span class="s1">'promise'</span><span class="p">);</span>
+
+</code></pre>
+</div>
+
+<p>Now we can simulate resize by the mock method above. So we have tests like below.</p>
+
+<p><strong>example</strong></p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code><span class="cm">/*
+  The test below checks if snapshots were the same before and after resizes.
+  You can also test for other window events like scroll in this manner.
+*/</span>
+<span class="nx">it</span><span class="p">(</span><span class="s1">'should resize properly'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">props</span> <span class="o">=</span> <span class="p">{</span> <span class="na">highlights</span><span class="p">:</span> <span class="kc">true</span> <span class="p">};</span>
+  <span class="kr">const</span> <span class="nx">component</span> <span class="o">=</span> <span class="nx">mount</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">MyComponent</span> <span class="p">{...</span><span class="nx">props</span><span class="p">}</span> <span class="sr">/&gt;, {attachTo: document.getElementById</span><span class="se">(</span><span class="sr">'root'</span><span class="se">)</span><span class="sr">}</span><span class="se">)</span><span class="err">;
+</span>  <span class="nx">global</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">resizeTo</span><span class="p">(</span><span class="mi">1025</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">mountToJson</span><span class="p">(</span><span class="nx">component</span><span class="p">)).</span><span class="nx">toMatchSnapshot</span><span class="p">();</span>
+  <span class="nx">global</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">resizeTo</span><span class="p">(</span><span class="mi">1020</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">mountToJson</span><span class="p">(</span><span class="nx">component</span><span class="p">)).</span><span class="nx">toMatchSnapshot</span><span class="p">();</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+
+<p><strong>I can’t get PostCSS to work!</strong></p>
+
+<p>This was one area where Jest fell short of expectations. <code class="highlighter-rouge">karma</code> allows you directly put in <code class="highlighter-rouge">webpack</code> transformations onto the configuration. <code class="highlighter-rouge">Jest</code> has <a href="https://facebook.github.io/jest/docs/tutorial-webpack.html#content">equivalent configuration</a> which is mapped to <code class="highlighter-rouge">webpack</code> config. But we found it to be adequate for our needs except that we could not get PostCSS plugins to work. Babel preprocessing is done out of the box using <a href="http://facebook.github.io/jest/docs/getting-started.html#babel-integration"><code class="highlighter-rouge">babel-jest</code></a> which comes bundled with Jest in the latest version. Jest can support <a href="https://facebook.github.io/jest/docs/configuration.html#transform-object-string-string">some preprocessors</a>, but somehow cannot support PostCSS as it has asynchronous plugins.
+So we had to use this proxy called <a href="https://github.com/keyanzhang/identity-obj-proxy">identity-obj-proxy</a> to proxy our styles with the given className.</p>
+
+<p>An alternative would be to try <a href="https://github.com/kosamari/web.advent.today/pull/27#discussion_r91408412">this advice</a> to preprocess all the css for easy consumption.</p>
+
+<p>For example for JSX,</p>
+
+<p><code class="highlighter-rouge">&lt;div className={styles['button-class']}&gt;Click&lt;/div&gt;</code></p>
+
+<p>the below snapshot is generated,</p>
+
+<p><code class="highlighter-rouge">&lt;div className='button-class'&gt;Click&lt;/div&gt;</code></p>
+
+<p>It does not allow you to test for true styles, only classNames. But, its a tradeoff we have made.</p>
+
+<p><strong>Can I calculate coverage?</strong></p>
+
+<p>I’m glad you asked the question! Coverage stats are inbuilt within Jest. No configuration is required. <code class="highlighter-rouge">jest --coverage</code> does it.
+The downside is that it considerably slows down your test runs. Hence we don’t keep it on during development. There are also really cool features like coverage thresholds. You can learn this by watching this excellent video on <a href="https://egghead.io/lessons/javascript-track-project-code-coverage-with-jest">Egghead.io by @kentcdodds</a>.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Its been a couple of weeks since we started using <code class="highlighter-rouge">Jest</code>. Code Coverage is slowly growing within the team. However we have configured our PR builds to fail if existing tests fail, that includes snapshots. In the future, we plan to have coverage thresholds too!</p>
+
+<p>PS - Thanks to <a href="https://twitter.com/kosamari">@kosamari</a> for the encouragement, <a href="https://twitter.com/saha_varsha">@saha_varsha</a> for actually battle testing the above scripts, <a href="https://twitter.com/cpojer">@cpojer</a> for the review and active involvement and <a href="https://twitter.com/rahulcs">@rahulcs</a> for the patient review!</p>

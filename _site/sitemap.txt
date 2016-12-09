@@ -4,6 +4,7 @@ http://pksjce.github.com/archive
 http://pksjce.github.com/
 http://pksjce.github.com/sitemap.txt
 
+http://pksjce.github.com/2016/12/08/notes-on-jest
 http://pksjce.github.com/emberjs/2014/02/18/dependency-management-in-emberjs
 http://pksjce.github.com/lessons/2014/02/05/Prototypal-inheritance-in-Javascript
 http://pksjce.github.com/lessons/2014/02/05/Demystifying-javascript-nuances

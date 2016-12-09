@@ -6,9 +6,6 @@ tagline:
 {% include JB/setup %}
 
 <div style="height:100%">
-  <div>
-    JavaScripter, OSS newbie. Loves cats and webpack, not in equal measures.
-  </div>
 
   <ul class="posts">
     {% for post in site.posts %}
