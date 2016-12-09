@@ -1,0 +1,500 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Writing A Js Console</title>
+    
+    <meta name="author" content="">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class='mylogo' style='float:left'>
+          <img src = "/assets/themes/twitter/../../imgs/logo.png" style='width:85px;height:40px'>
+        </div>
+        <div class="container">
+          <a class="brand" href="/"></a>
+          <ul class="nav">
+            <li class="active"><a href="/">Home</a></li>
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/about">About</a></li>
+      	
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        
+
+<div class="page-header">
+  <h1>Writing A Js Console  <small>eval all the way</small></h1>
+</div>
+
+<div class="row page-body">
+  <div class="span8">
+    
+<h2 id="objective">Objective</h2>
+
+<p>The objective of this exercise is to build a working javascript console on the browser.</p>
+
+<h2 id="analysis">Analysis</h2>
+
+<p>The functionality of this console must be as follows -</p>
+<ol>
+  <li>Should interpret only code that is input into the console box.This maybe single line or multiple lines.</li>
+  <li>Should maintain the history of what was interpreted before and print this below the console.</li>
+  <li>Should show any errors thrown during evaluation.</li>
+</ol>
+
+<h2 id="solution">Solution</h2>
+
+<h3 id="trial-1">Trial 1</h3>
+
+<h4 id="test-cases--">Test cases -</h4>
+<p>(Initial)</p>
+<ol>
+  <li>var s = 1; –&gt; undefined</li>
+  <li>s –&gt; 1;</li>
+  <li>z –&gt; Error:z is not defined.</li>
+</ol>
+
+<p>The first thought on interpreting javascript is to use eval() method and start printing its results.<br />
+Add a try/catch to catch any errors and display them;</p>
+
+<h4 id="javascript">Javascript</h4>
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code>	
+<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+	<span class="kd">var</span> <span class="nx">consoley</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">'#console'</span><span class="p">);</span>
+	<span class="nx">consoley</span><span class="p">.</span><span class="nx">keypress</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="mi">13</span><span class="p">){</span>
+			<span class="kd">var</span> <span class="nx">js</span> <span class="o">=</span> <span class="nx">consoley</span><span class="p">.</span><span class="nx">val</span><span class="p">();</span>
+			<span class="kd">var</span> <span class="nx">x</span><span class="p">;</span>
+			<span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="s1">'result'</span><span class="p">;</span>
+            
+			<span class="k">try</span><span class="p">{</span>
+				<span class="nx">x</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nx">js</span><span class="p">);</span>
+			<span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+				<span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+				<span class="nx">type</span><span class="o">=</span> <span class="s1">'error'</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="nx">$</span><span class="p">(</span><span class="s1">'#userjs'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">js</span><span class="p">);</span>
+			<span class="kd">var</span> <span class="nx">ans</span> <span class="o">=</span> <span class="nx">make_nice</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
+			<span class="nx">$</span><span class="p">(</span><span class="s1">'#answer'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">ans</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">});</span>
+<span class="p">});</span>
+
+<span class="kd">function</span> <span class="nx">make_nice</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">type</span><span class="p">){</span>
+	<span class="k">if</span><span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">"result"</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="nx">x</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">){</span>
+			<span class="k">return</span> <span class="s2">"undefined"</span><span class="p">;</span>
+		<span class="p">}</span>	
+	<span class="p">}</span> <span class="k">else</span><span class="p">{</span>
+		<span class="k">return</span> <span class="s2">"Error: "</span> <span class="o">+</span> <span class="nx">x</span><span class="p">;</span>
+	<span class="p">}</span>
+    <span class="k">return</span> <span class="nx">x</span><span class="p">;</span>
+	
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h4 id="html">HTML</h4>
+<div class="language-html highlighter-rouge"><pre class="highlight"><code>	<span class="nt">&lt;html&gt;</span>
+		<span class="nt">&lt;head&gt;</span>
+			<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">'jquery.js'</span><span class="nt">&gt;</span>
+			<span class="nt">&lt;/script&gt;</span>
+			<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">'main.js'</span><span class="nt">&gt;</span>
+			<span class="nt">&lt;/script&gt;</span>
+		<span class="nt">&lt;/head&gt;</span>
+		<span class="nt">&lt;body&gt;</span>
+			<span class="nt">&lt;div&gt;</span>
+				<span class="nt">&lt;input</span> <span class="na">type =</span><span class="err"> </span><span class="s">'text'</span> <span class="na">id=</span><span class="s">'console'</span><span class="nt">&gt;</span>
+			<span class="nt">&lt;/div&gt;</span>
+			<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">'userjs'</span><span class="nt">&gt;</span>
+			<span class="nt">&lt;/div&gt;</span>
+			<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">'answer'</span><span class="nt">&gt;</span>
+			<span class="nt">&lt;/div&gt;</span>
+		<span class="nt">&lt;/body&gt;</span>
+	<span class="nt">&lt;/html&gt;</span>
+</code></pre>
+</div>
+
+<p>Since undefined cannot be printed, I had to make a <code>make_nice</code> method where I set <code>undefined</code> as the output.</p>
+
+<p>This method passes the first and third test cases but fails the second one.
+The reason for this as per <a href="https://weblogs.java.net/blog/driscoll/archive/2009/09/08/eval-javascript-global-context">Context for evals</a>, is that eval is executed in the scope of the callback function. This scope is different every different time the callback function is called. Hence the result of the first eval was effectively “deleted” and new scope was created for the next event callback. The solution for this is to call eval with scope that persists and in our case global scope.</p>
+
+<h3 id="trial-2">Trial 2</h3>
+
+<p>Call <code>eval()</code> as <code>window.eval()</code></p>
+
+<p>With no change in html lets change the keypress callback to</p>
+
+<h4 id="javascript-1">Javascript</h4>
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code>	<span class="nx">consoley</span><span class="p">.</span><span class="nx">keypress</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="mi">13</span><span class="p">){</span>
+			<span class="kd">var</span> <span class="nx">js</span> <span class="o">=</span> <span class="nx">consoley</span><span class="p">.</span><span class="nx">val</span><span class="p">();</span>
+			<span class="kd">var</span> <span class="nx">x</span><span class="p">;</span>
+			<span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="s1">'result'</span><span class="p">;</span>
+            
+			<span class="k">try</span><span class="p">{</span>
+				<span class="nx">x</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nx">js</span><span class="p">);</span>
+			<span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+				<span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+				<span class="nx">type</span><span class="o">=</span> <span class="s1">'error'</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="nx">$</span><span class="p">(</span><span class="s1">'#userjs'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">js</span><span class="p">);</span>
+			<span class="kd">var</span> <span class="nx">ans</span> <span class="o">=</span> <span class="nx">make_nice</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
+			<span class="nx">$</span><span class="p">(</span><span class="s1">'#answer'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">ans</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">});</span>
+
+</code></pre>
+</div>
+
+<p>This change seems to have done the trick and is passing all 3 of our test cases.<br />
+Let’s create another test case.
+Add below snippet of code to the javascript of the page.</p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code>	<span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<p>Now we see that we are able to override the value of <code>s</code> in our mock console. This is highly undesirable behaviour. We do not want users of our console to be able to modify the objects on the page itself and thus mess with the functionality of the page.</p>
+
+<p>Solutions for this could be -</p>
+
+<h3 id="trial-3">Trial 3</h3>
+
+<p>Create a separate object and execute eval in its scope.</p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+	<span class="kd">var</span> <span class="nx">consoley</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">'#console'</span><span class="p">);</span>
+	<span class="nx">consoley</span><span class="p">.</span><span class="nx">keypress</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="mi">13</span><span class="p">){</span>
+			<span class="kd">var</span> <span class="nx">js</span> <span class="o">=</span> <span class="nx">consoley</span><span class="p">.</span><span class="nx">val</span><span class="p">();</span>
+			<span class="kd">var</span> <span class="nx">x</span><span class="p">;</span>
+			<span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="s1">'result'</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">mockConsole</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">mock_console</span><span class="p">();</span>
+			<span class="k">try</span><span class="p">{</span>
+				<span class="nx">x</span> <span class="o">=</span> <span class="nx">mockConsole</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">js</span><span class="p">);</span>
+			<span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+				<span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+				<span class="nx">type</span><span class="o">=</span> <span class="s1">'error'</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="nx">$</span><span class="p">(</span><span class="s1">'#userjs'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">js</span><span class="p">);</span>
+			<span class="kd">var</span> <span class="nx">ans</span> <span class="o">=</span> <span class="nx">make_nice</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
+			<span class="nx">$</span><span class="p">(</span><span class="s1">'#answer'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">ans</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">});</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">mock_console</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+	<span class="k">return</span> <span class="p">{</span>
+		<span class="na">log</span><span class="p">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">){</span>
+			<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">str</span><span class="p">);</span>
+			<span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>This still does not solve our problem because the global scope can still be modified through this function.</p>
+
+<h3 id="trial-4">Trial 4</h3>
+
+<p>After a lot of search, the only way to escape context of the page alltogether is to execute the eval in an iframe. This is the only place where another html page can be created and still be accessed by our page.</p>
+
+<p>So I created an iframe by</p>
+
+<div class="language-html highlighter-rouge"><pre class="highlight"><code>	<span class="nt">&lt;iframe</span> <span class="na">id=</span><span class="s">'myframe'</span> <span class="na">style=</span><span class="s">'display:none'</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;/iframe&gt;</span>
+</code></pre>
+</div>
+
+<p>By changing my mockconsole to point to iframe’s contentWindow, we have -</p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code>	<span class="kd">var</span> <span class="nx">mockConsole</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'myframe'</span><span class="p">).</span><span class="nx">contentWindow</span><span class="p">;</span>
+	<span class="k">try</span><span class="p">{</span>
+		<span class="nx">x</span> <span class="o">=</span> <span class="nx">mockConsole</span><span class="p">.</span><span class="nb">eval</span><span class="p">(</span><span class="nx">js</span><span class="p">);</span>
+	<span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+		<span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+		<span class="nx">type</span><span class="o">=</span> <span class="s1">'error'</span><span class="p">;</span>
+	<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Now, when we try to evaluate <code>s</code>, we are not able to access the globally defined <code>s = 2</code></p>
+
+<p>Its a pass!</p>
+
+<h3 id="add-console-features">Add Console features</h3>
+
+<h4 id="history-on-uparrowdownarrow">History on uparrow/downarrow</h4>
+
+<p>This seems to be an easy feature to add. But one caveat I found was<br />
+<code>Arrow keys cannot be detected on keypress event.</code><br />
+Once this was cleared, I added a keydown event on <code>consoley</code> with the following functionality</p>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code>	<span class="nx">consoley</span><span class="p">.</span><span class="nx">keydown</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">){</span>
+		<span class="kd">var</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">historyStack</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+		<span class="k">if</span><span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="mi">38</span> <span class="o">&amp;&amp;</span> <span class="nx">len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+			<span class="nx">uparrowhit</span> <span class="o">+=</span><span class="mi">1</span><span class="p">;</span>
+			<span class="k">if</span><span class="p">(</span><span class="nx">len</span> <span class="o">&gt;=</span> <span class="nx">uparrowhit</span><span class="p">){</span>
+				<span class="nx">consoley</span><span class="p">.</span><span class="nx">val</span><span class="p">(</span><span class="nx">historyStack</span><span class="p">[</span><span class="nx">len</span> <span class="o">-</span> <span class="nx">uparrowhit</span><span class="p">]);</span>
+			<span class="p">}</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="mi">40</span> <span class="o">&amp;&amp;</span> <span class="nx">len</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">uparrowhit</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+			<span class="k">if</span><span class="p">(</span><span class="nx">len</span> <span class="o">&gt;=</span> <span class="nx">uparrowhit</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">evt</span><span class="p">.</span><span class="nx">programmatic</span><span class="p">){</span>
+				<span class="nx">uparrowhit</span> <span class="o">-=</span><span class="mi">1</span><span class="p">;</span>
+				<span class="nx">consoley</span><span class="p">.</span><span class="nx">val</span><span class="p">(</span><span class="nx">historyStack</span><span class="p">[</span><span class="nx">len</span> <span class="o">-</span> <span class="nx">uparrowhit</span><span class="p">]);</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="k">return</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">});</span>
+</code></pre>
+</div>
+
+<p>This seems to work fine, except I am not able to position the cursor of the text box at the end of the text after addition of the code line from history. Turns out <code>evt.preventDefault()</code> at the end of the event handling does the trick.</p>
+
+<h3 id="add-autocompletion">Add autocompletion.</h3>
+<p>This to me seemed a harder task than the feature above.
+Autocompleting would include -</p>
+
+<h5 id="get-all-properties-of-input-object">Get all properties of input object.</h5>
+
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code>	<span class="c1">//always cache window properties - in our case iframe windows properties.</span>
+	<span class="kd">var</span> <span class="nx">mockConsole</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'myframe'</span><span class="p">).</span><span class="nx">contentWindow</span><span class="p">;</span>
+	<span class="nx">windowProps</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+		<span class="kd">var</span> <span class="nx">props</span> <span class="o">=</span> <span class="p">[];</span>
+		<span class="k">for</span><span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">mockConsole</span><span class="p">){</span>
+			<span class="nx">props</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="nx">props</span><span class="p">;</span>
+	<span class="p">}();</span>
+	<span class="c1">//now check if a dot seperated object needs to be evaluated.</span>
+	<span class="kd">function</span> <span class="nx">addAutocomplete</span><span class="p">(</span><span class="nx">consoley</span><span class="p">,</span> <span class="nx">js</span><span class="p">){</span>
+		<span class="kd">var</span> <span class="nx">inputSplit</span> <span class="o">=</span> <span class="nx">js</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">);</span>
+		<span class="kd">var</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">inputSplit</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+		<span class="kd">var</span> <span class="nx">autocompletelist</span> <span class="o">=</span> <span class="nx">windowProps</span><span class="p">;</span>
+		<span class="kd">var</span> <span class="nx">filter</span> <span class="o">=</span> <span class="nx">js</span><span class="p">;</span>
+		<span class="k">if</span><span class="p">(</span><span class="nx">inputSplit</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">inputSplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">'window'</span><span class="p">){</span>
+			<span class="nx">filter</span> <span class="o">=</span> <span class="nx">inputSplit</span><span class="p">[</span><span class="nx">len</span> <span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+			<span class="kd">var</span> <span class="nx">evalStr</span> <span class="o">=</span> <span class="nx">inputSplit</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">'.'</span><span class="p">);</span>
+			<span class="kd">var</span> <span class="nx">evaled</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nx">evalStr</span><span class="p">);</span>
+			<span class="nx">autocompletelist</span> <span class="o">=</span> <span class="p">[];</span>
+			<span class="k">for</span><span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">evaled</span><span class="p">){</span>
+				<span class="nx">autocompletelist</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="kd">var</span> <span class="nx">autocompleteStr</span> <span class="o">=</span> <span class="nx">getAutocompleteStr</span><span class="p">(</span><span class="nx">autocompletelist</span><span class="p">,</span> <span class="nx">filter</span><span class="p">);</span>
+		<span class="nx">alert</span><span class="p">(</span><span class="nx">autocompleteStr</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="kd">function</span> <span class="nx">getAutocompleteStr</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="nx">filter</span><span class="p">){</span>
+		<span class="kd">var</span> <span class="nx">filterList</span> <span class="o">=</span> <span class="nx">list</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span>
+			<span class="k">if</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">filter</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">){</span>
+				<span class="k">return</span> <span class="nx">item</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">})</span>
+		<span class="nx">filterList</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">){</span>
+			<span class="k">if</span><span class="p">(</span><span class="nx">a</span><span class="o">&gt;</span><span class="nx">b</span><span class="p">){</span>
+				<span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">a</span><span class="o">&lt;</span><span class="nx">b</span><span class="p">){</span>
+				<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">})</span>
+		<span class="k">if</span><span class="p">(</span><span class="nx">filterList</span><span class="p">.</span><span class="nx">length</span><span class="p">){</span>
+			<span class="k">return</span> <span class="nx">filterList</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+		<span class="p">}</span> 
+		<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The <code>alert(autocompleteStr)</code> now gives me the right autocomplete string after every keystroke.</p>
+
+<h4 id="display-the-autocomplete-as-a-grayed-out-string-behind-the-input">Display the autocomplete as a grayed out string behind the input.</h4>
+<div class="language-javascript highlighter-rouge"><pre class="highlight"><code>
+		<span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+			<span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span> <span class="o">=</span> <span class="s1">'text'</span> <span class="nx">id</span><span class="o">=</span><span class="s1">'console'</span><span class="o">&gt;</span>
+			<span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s1">'autocomplete'</span><span class="o">&gt;&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>		<span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>
+		<span class="c1">//CSS</span>
+		<span class="err">#</span><span class="nx">console</span><span class="p">{</span>
+			<span class="nl">width</span><span class="p">:</span> <span class="mi">98</span><span class="o">%</span><span class="p">;</span>
+			<span class="nl">border</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="nx">border</span><span class="o">-</span><span class="nx">bottom</span><span class="err">:</span> <span class="mi">1</span><span class="nx">px</span> <span class="nx">solid</span> <span class="nx">lightgray</span><span class="p">;</span>
+			<span class="nl">position</span><span class="p">:</span> <span class="nx">absolute</span><span class="p">;</span>
+			<span class="nl">background</span><span class="p">:</span> <span class="nx">transparent</span>
+		<span class="p">}</span>
+		<span class="err">#</span><span class="nx">console</span><span class="err">:</span><span class="nx">focus</span><span class="p">{</span>
+			<span class="nl">outline</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="nx">border</span><span class="o">-</span><span class="nx">bottom</span><span class="err">:</span> <span class="mi">1</span><span class="nx">px</span> <span class="nx">solid</span> <span class="nx">lightgray</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="err">#</span><span class="nx">autocomplete</span><span class="p">{</span>
+			<span class="nl">color</span><span class="p">:</span> <span class="nx">lightgray</span><span class="p">;</span>
+			<span class="nx">line</span><span class="o">-</span><span class="nx">height</span><span class="err">:</span> <span class="mi">138</span><span class="o">%</span><span class="p">;</span>
+			<span class="nl">position</span><span class="p">:</span> <span class="nx">absolute</span><span class="p">;</span>
+			<span class="nx">z</span><span class="o">-</span><span class="nx">index</span><span class="err">:</span> <span class="mi">9</span><span class="p">;</span>
+		<span class="p">}</span>
+
+		<span class="c1">//Javascript</span>
+		<span class="kd">var</span> <span class="nx">autocompleteElem</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">'#autocomplete'</span><span class="p">);</span>
+		<span class="nx">autocompleteElem</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s1">'left'</span><span class="p">,</span>  <span class="nx">offset</span> <span class="o">+</span> <span class="nx">autodistance</span><span class="p">);</span>
+		<span class="nx">autocompleteStr</span> <span class="o">=</span> <span class="nx">autocompleteStr</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">filterLen</span><span class="p">,</span> <span class="nx">autocompleteStr</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+		<span class="nx">autocompleteElem</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="nx">autocompleteStr</span><span class="p">);</span>
+</code></pre>
+</div>
+<p>This seems to be somewhat satisfactory.</p>
+
+<h4 id="left-arrow-must-complete-the-pending-autocomplete">Left Arrow must complete the pending autocomplete.</h4>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>```javascript
+consoley.keypress(function(evt){
+	var js = consoley.val();
+	var key = self._whichKey(evt);
+	if(key === 13){
+		self._uparrowhit = 0;
+		var x;
+		var type = 'result';
+        
+		try{
+			x = mockConsole.eval(js);
+		}catch(e){
+			x = e.message;
+			type= 'error';
+		}
+		self._historyStack.push(js);
+		consoley.val('');
+		self._autocomplete.html('');
+		var ans = self.make_nice(x, type);
+		self._write(js, ans);
+	}
+});
+``` ### Making this a plugin  
+</code></pre>
+</div>
+
+<p>The code needs to be modularized and made somewhat like a plugin so that it can be injected to any given div element.</p>
+
+
+    <hr>
+    <div class="pagination">
+      <ul>
+      
+        <li class="prev"><a href="/lessons/2013/12/25/emberjs-cookbook-contribution" title="Emberjs Cookbook Contribution">&larr; Previous</a></li>
+      
+        <li><a href="/archive.html">Archive</a></li>
+      
+        <li class="next"><a href="/lessons/2014/02/05/Demystifying-javascript-nuances" title="Demystifying Javascript Nuances">Next &rarr;</a></li>
+      
+      </ul>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'pksjce'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+  
+  <div class="span4">
+    <h4>Published</h4>
+    <div class="date"><span>04 February 2014</span></div>
+
+    
+  </div>
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy;  2012 
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    
+  </body>
+</html>
+

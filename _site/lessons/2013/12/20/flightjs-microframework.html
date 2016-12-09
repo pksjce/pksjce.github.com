@@ -1,0 +1,166 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Flightjs Microframework</title>
+    
+    <meta name="author" content="">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class='mylogo' style='float:left'>
+          <img src = "/assets/themes/twitter/../../imgs/logo.png" style='width:85px;height:40px'>
+        </div>
+        <div class="container">
+          <a class="brand" href="/"></a>
+          <ul class="nav">
+            <li class="active"><a href="/">Home</a></li>
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/about">About</a></li>
+      	
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        
+
+<div class="page-header">
+  <h1>Flightjs Microframework  <small>Things I learnt</small></h1>
+</div>
+
+<div class="row page-body">
+  <div class="span8">
+    
+<h2 id="flightjs">FlightJs</h2>
+
+<p><a href="http://twitter.github.io/flight/">Flight</a> is a tiny framework put forth by twitter. The crux of its usage is based on events.</p>
+
+<p>Basically how things work are as follows -</p>
+<ul>
+  <li>Divide your potential application into various components. These must ideally be self sustaining.</li>
+  <li>The components must respond to certain events and after thier respective jobs must send out certain events too. One of the components (UI one preferably) will start the chain by auto triggering a paint event on the page.</li>
+  <li>The components are created and attached to the DOM - either to the document or to some element. Unique components can be created by attaching them to different elements.</li>
+  <li>The framework enables every component to listen to events on a dom element or document itself. The Dom events and custom events are propogated identically.</li>
+  <li>Nobody has access to another component but only to the data propagated through events.</li>
+</ul>
+
+<p>I was able to create my own TodoList aka Todo MVC style at <a href="https://github.com/pksjce/pksjce.github.com">Flight -Todo</a></p>
+
+<p>This style of programming was a very liberating one to me. Programming in a certain paradigm for a long time can get you into a rut. It was refreshing to implement my own MVC by structuring the components in a certain way. It was a good thinking exercise too, to make sure all components were self sufficient and decoupled.</p>
+
+    <hr>
+    <div class="pagination">
+      <ul>
+      
+        <li class="prev"><a href="/lessons/2013/11/26/machine-learning-rocks" title="Machine Learning Rocks">&larr; Previous</a></li>
+      
+        <li><a href="/archive.html">Archive</a></li>
+      
+        <li class="next"><a href="/lessons/2013/12/25/emberjs-cookbook-contribution" title="Emberjs Cookbook Contribution">Next &rarr;</a></li>
+      
+      </ul>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'pksjce'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+  
+  <div class="span4">
+    <h4>Published</h4>
+    <div class="date"><span>20 December 2013</span></div>
+
+    
+  </div>
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy;  2012 
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    
+  </body>
+</html>
+

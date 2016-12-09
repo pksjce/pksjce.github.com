@@ -1,0 +1,276 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Dependency Management In Emberjs</title>
+    
+    <meta name="author" content="">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class='mylogo' style='float:left'>
+          <img src = "/assets/themes/twitter/../../imgs/logo.png" style='width:85px;height:40px'>
+        </div>
+        <div class="container">
+          <a class="brand" href="/"></a>
+          <ul class="nav">
+            <li class="active"><a href="/">Home</a></li>
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/about">About</a></li>
+      	
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        
+
+<div class="page-header">
+  <h1>Dependency Management In Emberjs  <small>A primer on Container!</small></h1>
+</div>
+
+<div class="row page-body">
+  <div class="span8">
+    
+<p>Ember does a lot of behind-the-scenes work to maintain the relationships and connections between objects in your application. All of Ember’s internal objects and those in your application namespace have references stored in another object named Container. This container is referred to under different circumstances during your application’s lifecycle to retrieve needed objects. Ember also manages complex dependencies between these objects using the same container.</p>
+
+<h4 id="what-is-object-management-in-ember">What is Object Management in Ember?</h4>
+
+<p>Ember creates tons of objects for your definitions. For eg - the singleton router, instances of views that you/handlebars helpers defined and ofcourse your controller, models and templates.<br />
+Management of these objects in the context of Ember would involve doing the following -</p>
+
+<ul>
+  <li>Keep track of all the objects defined.</li>
+  <li>Retrieving stored objects vs Creating new objects where required vs Retrieve method as is.</li>
+</ul>
+
+<h4 id="when-does-dependency-injection-happen-in-ember">When does dependency injection happen in Ember?</h4>
+
+<p>The answer to this question is - All the time!</p>
+
+<ul>
+  <li>You can always access your controller from the corresponding view.</li>
+  <li>You can always access your router from all the controllers.</li>
+  <li>In your route when you say <code class="highlighter-rouge">setupController(controller, model)</code>, it may seem magical that <code class="highlighter-rouge">controller</code> and <code class="highlighter-rouge">model</code> objects are readily available to you. But this is injection and Ember does that for you.</li>
+</ul>
+
+<p>Ember does all of these tasks using a class called Container.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Container</span><span class="p">();</span></code></pre></figure>
+
+<p>Your whole application will only have one container that is created by Ember to hold all the component objects and connections between them.Ember accomplishes all the above magic through this container object.</p>
+
+<h5 id="keep-track-of-all-the-objects-defined">Keep track of all the objects defined.</h5>
+
+<p>When you define an object, say,</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">window</span><span class="p">.</span><span class="nx">App</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+	<span class="na">rootElement</span><span class="p">:</span><span class="s2">"#mainPage"</span><span class="p">,</span>
+	<span class="na">LOG_TRANSITIONS</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+	<span class="na">LOG_BINDINGS</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">});</span></code></pre></figure>
+
+<p>Ember registers this ‘factory’ to the container’s registry as <code class="highlighter-rouge">application:main</code></p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">container</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">'application:main'</span><span class="p">,</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+	<span class="na">rootElement</span><span class="p">:</span><span class="s2">"#mainPage"</span><span class="p">,</span>
+	<span class="na">LOG_TRANSITIONS</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+	<span class="na">LOG_BINDINGS</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">});)</span></code></pre></figure>
+
+<p>The parameters required to register are</p>
+
+<ol>
+  <li>
+    <p>param1 - <code class="highlighter-rouge">application:main</code>
+ Here the part before <code class="highlighter-rouge">:</code> is the <code class="highlighter-rouge">type</code> of the function definition.
+ The part after <code class="highlighter-rouge">:</code> is the <code class="highlighter-rouge">name</code> of the particular definition.</p>
+  </li>
+  <li>
+    <p>param2 - This is the <code class="highlighter-rouge">function definition</code> that you provided. This is referred to as the <code class="highlighter-rouge">factory</code></p>
+  </li>
+</ol>
+
+<h5 id="lookup-objects">Lookup Objects</h5>
+
+<p>The api <code class="highlighter-rouge">container.lookup</code> allows the application to retrieve objects from the container as and when required.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">container</span><span class="p">.</span><span class="nx">lookup</span><span class="p">(</span><span class="s1">'application:main'</span><span class="p">);</span></code></pre></figure>
+
+<p>The lookup basically resolves the string that you have passed to <code class="highlighter-rouge">type</code> and <code class="highlighter-rouge">name</code> and looks up the factory in the registry. Once the factory has been found, one of the following 3 things has to be decided before returning the object required.</p>
+
+<ul>
+  <li>Return the factory as it is (in case of a template function)</li>
+  <li>Create a new instance of the factory (in case of a view)</li>
+  <li>Return an existing instance of the factory (singleton) (in case of the router)</li>
+</ul>
+
+<p>The choice of the above behaviors is made by defining options for the factory during register. The options are 
+<code class="highlighter-rouge"><span class="p">{</span><span class="err">instantiate:true/false</span><span class="p">}</span></code> and <code class="highlighter-rouge"><span class="p">{</span><span class="err">singleton:true/false</span><span class="p">}</span></code>.</p>
+
+<ul>
+  <li>instantiate - set this to true if you want a different instance to be created at every lookup.</li>
+  <li>singleton - set this to true if you want a singleton instance, that is, the lookup will create the instance only once and store it. Further lookups to this factory would return to you the same instance.<br />
+The default option for both are false, in which case the container returns the factory object as it is during lookup.</li>
+</ul>
+
+<p>At this point, it’s good to mention that <code class="highlighter-rouge">the container object is available in all the objects that are looked up from it</code>. This is a useful thing to know and will be mentioned further down the road.</p>
+
+<h4 id="dependency-injection">Dependency injection</h4>
+
+<p>Injecting dependencies in the Ember contex is to make one object from the registry available in another object of the registry.If this is an instantiated object, then it will be available within the scope of the parent object.</p>
+
+<p>The two types of injection are -</p>
+
+<ol>
+  <li>Controlled by the object<br />
+Dependency injection inside an object is simply made by lookup of the required object from the container.</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">App</span><span class="p">.</span><span class="nx">IndexView</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+	<span class="na">router</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
+		<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">container</span><span class="p">.</span><span class="nx">lookup</span><span class="p">(</span><span class="s1">'router:main'</span><span class="p">);</span>
+	<span class="p">}.</span><span class="nx">property</span><span class="p">()</span>
+<span class="p">});</span></code></pre></figure>
+
+<p>Since we know that <code class="highlighter-rouge">IndexView</code> will be initialised through the container for your application, <code class="highlighter-rouge">this.container</code> will give you the Application container, using which you can register/lookup new definitions/objects.</p>
+
+<ol>
+  <li>Controlled by outside forces.
+Injecting dependencies from outside an object allows you to maintain a modicum of decoupling between the two objects.</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">App</span><span class="p">.</span><span class="nx">GoogleAnalytics</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+	<span class="cm">/*methods to abstract analytics functionality*/</span>
+<span class="p">});</span>
+
+<span class="nx">App</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">'analytics:google'</span><span class="p">,</span> <span class="nx">App</span><span class="p">.</span><span class="nx">GoogleAnalytics</span><span class="p">,</span> <span class="p">{</span><span class="na">singleton</span><span class="p">:</span><span class="kc">true</span><span class="p">});</span> 
+<span class="c1">// Note- App.register and App.inject are facades over container.register/container.inject</span>
+<span class="nx">App</span><span class="p">.</span><span class="nx">inject</span><span class="p">(</span><span class="s1">'controller'</span><span class="p">,</span> <span class="s1">'analytics'</span><span class="p">,</span> <span class="s1">'analytics:google'</span><span class="p">);</span> </code></pre></figure>
+
+<p>By doing so, we inject <code class="highlighter-rouge">analytics:google</code> as variable <code class="highlighter-rouge">analytics</code> in the returned of all factories of type <code class="highlighter-rouge">controller</code>.
+We can also inject objects into a specific <code class="highlighter-rouge">type:name</code> factory like</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">App</span><span class="p">.</span><span class="nx">OtherAnalytics</span> <span class="o">=</span> <span class="nx">Ember</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+	<span class="cm">/*methods to abstract analytics functionality*/</span>
+<span class="p">})</span>
+<span class="nx">App</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">'analytics:other'</span><span class="p">,</span> <span class="nx">App</span><span class="p">.</span><span class="nx">OtherAnalytics</span><span class="p">,</span> <span class="p">{</span><span class="na">singleton</span><span class="p">:</span><span class="kc">true</span><span class="p">});</span>
+<span class="nx">App</span><span class="p">.</span><span class="nx">inject</span><span class="p">(</span><span class="s1">'controller:mysplcontroller'</span><span class="p">,</span> <span class="s1">'analytics'</span><span class="p">,</span> <span class="s1">'analytics:other'</span><span class="p">);</span></code></pre></figure>
+
+<p>The advantages of relenquishing injection control to an outside authority, allows the <code class="highlighter-rouge">controllers</code> from having to keep knowledge of what kind of <code class="highlighter-rouge">analytics</code> module they need. Thus, the expectation is that <code class="highlighter-rouge">this.analytics.trackPage(data)</code> will work seamlessly across all controllers regardless of the identity of the injected object.</p>
+
+    <hr>
+    <div class="pagination">
+      <ul>
+      
+        <li class="prev"><a href="/lessons/2014/02/05/Prototypal-inheritance-in-Javascript" title="Prototypal Inheritance In Javascript">&larr; Previous</a></li>
+      
+        <li><a href="/archive.html">Archive</a></li>
+      
+        <li class="next disabled"><a>Next &rarr;</a>
+      
+      </ul>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'pksjce'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+  
+  <div class="span4">
+    <h4>Published</h4>
+    <div class="date"><span>18 February 2014</span></div>
+
+    
+  </div>
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy;  2012 
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    
+  </body>
+</html>
+

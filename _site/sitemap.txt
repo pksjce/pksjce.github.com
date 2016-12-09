@@ -1,24 +1,19 @@
 
-http://pksjce.github.com/archive.html
+http://pksjce.github.com/about
+http://pksjce.github.com/archive
+http://pksjce.github.com/
 http://pksjce.github.com/sitemap.txt
-http://pksjce.github.com/index.html
 
 http://pksjce.github.com/emberjs/2014/02/18/dependency-management-in-emberjs
-http://pksjce.github.com/2014/02/12/Emberjs-closer-look-socketio
 http://pksjce.github.com/lessons/2014/02/05/Prototypal-inheritance-in-Javascript
 http://pksjce.github.com/lessons/2014/02/05/Demystifying-javascript-nuances
 http://pksjce.github.com/lessons/2014/02/04/Writing-a-js-console
-http://pksjce.github.com/2014/01/15/Emberjs-closer-look-render-helper
-http://pksjce.github.com/2014/01/10/Backburnerjs-deep-dive
 http://pksjce.github.com/lessons/2013/12/25/emberjs-cookbook-contribution
 http://pksjce.github.com/lessons/2013/12/20/flightjs-microframework
 http://pksjce.github.com/lessons/2013/11/26/machine-learning-rocks
 http://pksjce.github.com/lessons/2013/11/24/thoughts-on-angular
 http://pksjce.github.com/lessons/2013/11/07/a-lesson-on-heaps
-http://pksjce.github.com/lessons/2013/11/05/big-history-formation-of-stars
-http://pksjce.github.com/lessons/2013/11/04/talking-about-big-history
 http://pksjce.github.com/lessons/2013/10/22/a-failed-almost-pull-request
 http://pksjce.github.com/lessons/2013/08/30/optimisation-javascript
 http://pksjce.github.com/lessons/2013/08/13/html2pdfconverter
 http://pksjce.github.com/lessons/2013/08/02/pitfalls-preventing-cross-browser-compatibility
-http://pksjce.github.com/lessons/2013/07/05/gruntandyourworkflow

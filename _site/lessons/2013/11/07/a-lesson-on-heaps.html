@@ -1,0 +1,222 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>A Lesson On Heaps</title>
+    
+    <meta name="author" content="">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class='mylogo' style='float:left'>
+          <img src = "/assets/themes/twitter/../../imgs/logo.png" style='width:85px;height:40px'>
+        </div>
+        <div class="container">
+          <a class="brand" href="/"></a>
+          <ul class="nav">
+            <li class="active"><a href="/">Home</a></li>
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/about">About</a></li>
+      	
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        
+
+<div class="page-header">
+  <h1>A Lesson On Heaps  <small>Working with FHeaps</small></h1>
+</div>
+
+<div class="row page-body">
+  <div class="span8">
+    
+<p>The day I found <a href="http://maryrosecook.com/">Mary Rose Cook’s blog</a>, I was fascinated! This was exactly the no nonsense virtual mentor I was looking for. A look through her projects is enough to intimidate faint hearted people like me. With great determination, I picked up <a href="https://github.com/maryrosecook/fibonacciheap">Fibonacci Heaps</a> as my next project.</p>
+
+<p>The only connection I felt to the topic when I read her post was that I knew what Binary Heaps were, or at least had a reasonable confidence of finding and understanding them quickly and I knew Djikstra’s shortest path algorithm of course. With those as my foundations, I hunted for my DataStructures text book and quickly brushed up on binary heaps and how to create and sort them. Teaching my brother and discussing it with him got me up to speed on it’s space and time complexities. Okay, that was relatively easy.</p>
+
+<p>Now what in heaven’s name were Fibonacci Heaps? I had a vague idea of trees growing in fibonacci numbered rank. I started with Wikipedia. A cursory glance did not help a lot. This was tougher. Mary’s article, of course just whooshed above my head. So, I thought I should start with some basics.</p>
+
+<p><a href="http://www.youtube.com/watch?v=yIUFT6AKBGE">Jonathan Shewchuk’s lecture</a> served as a lengthy but solid starting point. I now knew what priority queues were.Next I looked for some lecture specific to Fibonacci heaps and found <a href="http://www.youtube.com/watch?v=Wbw8_YaAvBY">this entertaining video</a>. It was somewhat informative but not very convincing in it’s examples. So I decided to tackle it at the source and downloaded <a href="http://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/fibonacci%20heaps.pdf">Fredman and Tarjan’s paper</a>. The clarity of the paper was very refreshing. It took me two days to absorb it, but by then I could mentally imagine all the operations in the F-Heap.</p>
+
+<p>I am not sure how well I could explain it, but here are my example operations using FHeaps for consideration.
+<img src="http://pksjce.github.io/assets/imgs/fheap1.jpg" alt="FHEap1" />
+<img src="http://pksjce.github.io/assets/imgs/fheap2.jpg" alt="FHeap2" /></p>
+
+<p>FHeaps are priority heaps whose job is to always give you the smallest key in your heap. The running times for finding minimum are very low because of thier structure. They are thus used in shortest path algorithms and are the best example of speeding an algorithm considerably by only changing datastructure.They achieve this speed by lazy insertion of elements and not sorting the entire heap for every deletion of minimum key.<br />
+Having said that, FHeaps mainly perform the following three operations</p>
+<ol>
+  <li>Insert</li>
+  <li>FindMin</li>
+  <li>DeleteMin</li>
+</ol>
+
+<p>I have learnt the decreasemin operation but I havent used it till now, so I will rest my judgement on it’s importance.</p>
+
+<p>Implementation of an FHeap is made using a doubly linked circular list with pointers to parent and child added. A pointer to the minimum node is always maintained in the heap instance and updated after every operation.
+Hence and FHeap node will look like this.</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript">	<span class="nx">Node</span> <span class="p">{</span>
+		<span class="nx">data</span><span class="p">,</span>
+		<span class="nx">next</span><span class="p">,</span>
+		<span class="nx">prev</span><span class="p">,</span>
+		<span class="nx">parent</span><span class="p">,</span>
+		<span class="nx">child</span><span class="p">,</span>
+		<span class="nx">rank</span>
+	<span class="p">}</span></code></pre></figure>
+
+<ol>
+  <li>Insert - During insertion, the new node is lazily added to the list of roots.The pseudocode would be -</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript">	<span class="nx">item</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+	<span class="nx">next</span> <span class="o">=</span> <span class="nx">min</span><span class="p">.</span><span class="nx">next</span>
+	<span class="nx">next</span><span class="p">.</span><span class="nx">prev</span> <span class="o">=</span> <span class="nx">item</span><span class="p">;</span>
+	<span class="nx">item</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">next</span><span class="p">;</span>
+	<span class="nx">min</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">item</span><span class="p">;</span>
+	<span class="nx">item</span><span class="p">.</span><span class="nx">prev</span> <span class="o">=</span> <span class="nx">min</span><span class="p">;</span>
+	<span class="k">if</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">data</span> <span class="o">&lt;</span> <span class="nx">min</span><span class="p">.</span><span class="nx">data</span><span class="p">){</span>
+		<span class="nx">min</span> <span class="o">=</span> <span class="nx">item</span><span class="p">;</span>
+	<span class="p">}</span></code></pre></figure>
+
+<ol>
+  <li>FindMin -</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript">	
+	<span class="k">return</span> <span class="nx">min</span></code></pre></figure>
+
+<ol>
+  <li>
+    <p>DeleteMin - This is a more complex procedure.</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code> RemoveMin and make its children part of the root list.
+ Iterate through the rootlist and create new heaps by linking the roots which have same rank.
+ Do the above until no two trees in the heap have the same rank.
+ Now create a new heap out of the new set of trees.
+ Compare the roots of the heap and set min to the smallest key.
+</code></pre>
+    </div>
+  </li>
+</ol>
+
+<p>A detailed example is present in the pictures and <a href="https://github.com/pksjce/f_heaps">my implementation in Javascript</a> might help in better understanding.</p>
+
+<p>For an explanation on the outrageous title, I started on this implementation with utmost confidence, but the power of trees and my lack of practice in recursion brought me down comprehensively. I was literally thinking of little numbers inside circles connected to each other for the past two weeks on and off until I finally after two massive attempts at deletemin completed the implementation! And also, I had a grand scheme of showing off my FHeaps using raphael which is still in the works :(</p>
+
+    <hr>
+    <div class="pagination">
+      <ul>
+      
+        <li class="prev"><a href="/lessons/2013/10/22/a-failed-almost-pull-request" title="A Failed Almost Pull Request">&larr; Previous</a></li>
+      
+        <li><a href="/archive.html">Archive</a></li>
+      
+        <li class="next"><a href="/lessons/2013/11/24/thoughts-on-angular" title="Thoughts On Angular">Next &rarr;</a></li>
+      
+      </ul>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'pksjce'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+  
+  <div class="span4">
+    <h4>Published</h4>
+    <div class="date"><span>07 November 2013</span></div>
+
+    
+  </div>
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy;  2012 
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    
+  </body>
+</html>
+
