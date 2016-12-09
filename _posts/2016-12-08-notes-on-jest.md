@@ -1,5 +1,3 @@
-# Notes on Jest
-
 During the past 4 months, I have been working on the Flipkart desktop website team. For me it meant finally working on code at scale. If there was any place where TDD would be appreciated, it was here, on user facing critical code. The tests were being written on a setup of Karma, Mocha, Sinon and Enzyme. It worked pretty great, but the major peeve for all of us, was that, it was so slow!
 
 The team had already tried using Jest before, had faced many issues with the automocking and given up. But then Jest made a turnaround and with a great community effort released improved and [new versions](https://facebook.github.io/jest/blog/2016/10/03/jest-16.html). From all the blogposts, we found that Jest's main focus was testing performance and something new called ["Snapshot testing"](https://facebook.github.io/jest/blog/2016/07/27/jest-14.html). Also, mainly it promised to be "Painless JavaScript Testing". Jest can mostly work for testing in any JavaScript framework or environment. Also, its a known fact that Jest uses itself to test it's codebase.
