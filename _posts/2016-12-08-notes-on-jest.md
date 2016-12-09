@@ -280,3 +280,5 @@ The downside is that it considerably slows down your test runs. Hence we don't k
 ## Conclusion
 
 Its been a couple of weeks since we started using `Jest`. Code Coverage is slowly growing within the team. However we have configured our PR builds to fail if existing tests fail, that includes snapshots. In the future, we plan to have coverage thresholds too!
+
+PS - Thanks to [@kosamari](https://twitter.com/kosamari) for the encouragement, [@saha_varsha](https://twitter.com/saha_varsha) for actually battle testing the above scripts, [@cpojer](https://twitter.com/cpojer) for the review and active involvement and [@rahulcs](https://twitter.com/rahulcs) for the patient review!
